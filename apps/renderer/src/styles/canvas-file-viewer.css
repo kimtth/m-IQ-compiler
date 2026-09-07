@@ -1,0 +1,172 @@
+/* --- canvas file viewer -------------------------------------------------- *
+ * Reads as a document, not an editor: generous measure, no focus affordances,
+ * the path always visible so the artefact stays attributable to a file. */
+
+.viewer .path {
+  font-family: var(--font-mono);
+  font: var(--t-caption);
+  margin: 0 0 var(--s-12);
+  word-break: break-all;
+}
+
+.segmented {
+  display: inline-flex;
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.segmented button {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--fg-muted);
+  padding: var(--s-4) var(--s-8);
+  font: var(--t-caption);
+}
+
+.segmented button.on {
+  background: var(--primary-tint);
+  color: var(--primary);
+  font-weight: 600;
+}
+
+pre.source {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.55;
+  background: var(--code-bg);
+  border: 1px solid var(--code-border);
+  border-radius: var(--radius-md);
+  padding: var(--s-12);
+  overflow: auto;
+  white-space: pre;
+  margin: 0;
+  color: var(--code-fg);
+}
+
+pre.source.numbered {
+  padding-left: 0;
+}
+
+pre.source.numbered .line {
+  display: flex;
+}
+
+pre.source.numbered .gutter {
+  flex: 0 0 3.5rem;
+  padding-right: var(--s-12);
+  text-align: right;
+  color: var(--fg-disabled);
+  user-select: none;
+}
+
+pre.source.numbered .text {
+  white-space: pre;
+}
+
+.image-frame {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-sunken);
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-md);
+  padding: var(--s-12);
+  min-height: 200px;
+}
+
+/* Fit to the pane rather than cropping. */
+.image-frame img {
+  max-width: 100%;
+  max-height: 70vh;
+  object-fit: contain;
+}
+
+.markdown {
+  max-width: 72ch;
+  line-height: 1.6;
+}
+
+.markdown h1,
+.markdown h2,
+.markdown h3,
+.markdown h4 {
+  margin: var(--s-20) 0 var(--s-8);
+  line-height: 1.25;
+}
+
+.markdown h1 { font: var(--t-title); }
+.markdown h2 { font: var(--t-subtitle); }
+.markdown h3 { font: var(--t-body-lg); font-weight: 600; }
+
+.markdown p,
+.markdown ul,
+.markdown ol {
+  margin: 0 0 var(--s-12);
+}
+
+.markdown li { margin-bottom: var(--s-4); }
+
+.markdown blockquote {
+  margin: 0 0 var(--s-12);
+  padding: var(--s-8) var(--s-12);
+  border-left: 3px solid var(--primary);
+  background: var(--primary-tint);
+  color: var(--fg-2);
+}
+
+.markdown code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  background: var(--code-bg);
+  border: 1px solid var(--code-border);
+  border-radius: var(--radius-sm);
+  padding: 1px var(--s-4);
+}
+
+.markdown hr {
+  border: 0;
+  border-top: 1px solid var(--stroke);
+  margin: var(--s-20) 0;
+}
+
+/* --- responsive ---------------------------------------------------------- *
+ * When space runs out, collapse by priority: the navigator first, then the
+ * chat, so canvas and chat are the two panes that survive. The shell also
+ * drives this via .pane.hidden; these rules are the CSS-only fallback. */
+
+@media (max-width: 1180px) {
+  .pane.navigator {
+    width: 56px;
+    min-width: 56px;
+  }
+  .pane.navigator .pane-title,
+  .pane.navigator .tree-row .name,
+  .pane.navigator .muted {
+    display: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .pane.navigator,
+  .pane.inspector {
+    display: none;
+  }
+  .pane.chat {
+    width: var(--pane-width, 340px);
+  }
+}
+
+@media (max-width: 680px) {
+  /* Single-pane: only chat and canvas survive, one at a time. */
+  .pane.chat,
+  .pane.canvas {
+    flex: 1 1 0;
+    width: auto;
+    min-width: 0;
+  }
+  .pane-divider {
+    display: none;
+  }
+}

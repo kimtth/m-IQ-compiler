@@ -1,0 +1,174 @@
+/* --- MCP: what has to happen outside the app ----------------------------- *
+ * Sign-in, licence and consent are held by the server's own CLI, so a server
+ * can look perfectly configured here and refuse every call. These are commands
+ * to be copied verbatim and run in order, so they are set as a numbered list of
+ * code blocks rather than prose: the caption argues, the block is the answer.
+ * `user-select: text` because the whole point is copying it out. */
+.mcp-setup {
+  margin-top: var(--s-8);
+  padding: var(--s-12);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-sunken);
+  font: var(--t-body);
+}
+
+.mcp-setup ol {
+  margin: var(--s-8) 0 0;
+  padding-left: var(--s-20);
+  display: grid;
+  gap: var(--s-8);
+}
+
+.mcp-setup li::marker {
+  font-variant-numeric: tabular-nums;
+}
+
+.mcp-setup pre {
+  margin: var(--s-4) 0 0;
+  padding: var(--s-8);
+  border-radius: var(--radius);
+  background: var(--surface);
+  overflow-x: auto;
+  user-select: text;
+}
+
+.mcp-setup code {
+  font-size: 12px;
+  white-space: pre;
+}
+
+/* --- Fabric: the source-document allow-list ------------------------------ *
+ * A candidate list is a decision made row by row, so the rows have to line up:
+ * tick, path, size, at the same three x-positions whatever the path is called.
+ * It is also unbounded — a workspace can hold hundreds of documents — so it
+ * gets a box of its own with a scrollbar rather than pushing the Build button
+ * off the bottom of the card. The box is a sunken fill and nothing else: it
+ * sits inside a card that is already outlined, and two rectangles a few pixels
+ * apart leave the eye guessing which edge belongs to what. */
+.fabric-files {
+  display: grid;
+  gap: var(--s-2);
+  max-height: min(220px, 32vh);
+  overflow: auto;
+  padding: var(--s-8);
+  border-radius: var(--radius-md);
+  background: var(--surface-sunken);
+}
+
+/* The same ceiling for the other lists on this surface that grow with the data:
+ * the workspace's own items, and what a run created. They had none, so a
+ * workspace holding eighty tables pushed everything under it off the window.
+ *
+ * The ceiling is relative to the window as well as absolute. A flat 220px is a
+ * third of a laptop pane, and three such lists stacked leave no room for
+ * anything that is not a list. */
+.capped-list {
+  display: grid;
+  gap: var(--s-2);
+  max-height: min(220px, 32vh);
+  overflow: auto;
+}
+
+.fabric-files .tool-grant {
+  display: grid;
+  grid-template-columns: 14px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--s-8);
+  padding: var(--s-2) 0;
+}
+
+.fabric-files .tool-grant .mono {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+}
+
+.fabric-files .tool-grant input {
+  margin-top: 0;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+th,
+td {
+  text-align: left;
+  padding: var(--s-8);
+  border-bottom: 1px solid var(--stroke);
+  vertical-align: top;
+}
+
+th {
+  color: var(--fg-muted);
+  font-weight: 600;
+}
+
+/* --- in-flight affordances: spinner, skeleton, streaming dot ------------- */
+
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--stroke-strong);
+  border-top-color: var(--primary);
+  border-radius: var(--radius-circular);
+  animation: spin 0.7s linear infinite;
+  flex: none;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: var(--skeleton-base);
+  border-radius: var(--radius-sm);
+  min-height: 12px;
+}
+
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, var(--skeleton-sheen), transparent);
+  animation: shimmer 1.4s var(--ease) infinite;
+}
+
+@keyframes shimmer {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+/* A small streaming indicator for a message still being written. */
+.stream-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: var(--radius-circular);
+  background: var(--primary);
+  animation: stream-pulse 1s var(--ease) infinite;
+  vertical-align: middle;
+}
+
+@keyframes stream-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

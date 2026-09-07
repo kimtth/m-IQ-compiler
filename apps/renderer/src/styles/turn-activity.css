@@ -1,0 +1,190 @@
+/* --- turn activity ------------------------------------------------------- *
+ * One block per turn, collapsed to a line. Every tool call used to be its own
+ * bordered card — a deck build produced twenty of them, most saying "No output
+ * recorded", with the tool name printed twice. The transcript became the log
+ * file rather than the conversation, so the whole thing now reduces to a status
+ * line the reader can open if they want the evidence. */
+.activity {
+  max-width: 76ch;
+  margin-bottom: var(--s-8);
+}
+
+.activity-head {
+  display: flex;
+  align-items: center;
+  gap: var(--s-8);
+  width: 100%;
+  padding: var(--s-4) var(--s-8);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  background: transparent;
+  font: var(--t-caption);
+  color: var(--fg-muted);
+  text-align: left;
+  cursor: pointer;
+}
+
+/* No border until it is pointed at: a settled turn's activity line is a
+   footnote, and a box around it makes it compete with the answer above. */
+.activity-head:hover,
+.activity-head:focus-visible,
+.activity-head[aria-expanded="true"] {
+  border-color: var(--tool-card-border);
+  background: var(--tool-card-head-bg);
+  color: var(--fg-2);
+}
+
+.activity-icon {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.activity.busy .activity-icon {
+  color: var(--accent);
+}
+
+.activity-headline {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* While the turn runs the line is the only thing moving on screen, so it gets
+   the emphasis; when it is done it goes back to being a footnote. */
+.activity.busy .activity-headline {
+  color: var(--fg-2);
+}
+
+.activity-count {
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  color: var(--fg-muted);
+}
+
+.activity-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-8);
+  margin-top: var(--s-8);
+  padding: var(--s-8);
+  border: 1px solid var(--tool-card-border);
+  border-radius: var(--radius-md);
+  background: var(--tool-card-bg);
+}
+
+.activity-step-head {
+  display: flex;
+  align-items: center;
+  gap: var(--s-8);
+  font: var(--t-caption);
+  color: var(--fg-2);
+}
+
+.activity-output {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  margin-top: var(--s-4);
+}
+
+.activity-output pre {
+  margin: 0;
+  padding: var(--s-8);
+  border-radius: var(--radius-sm);
+  font: 12px/1.5 var(--font-mono);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 260px;
+  overflow: auto;
+  color: var(--code-fg);
+  background: var(--code-bg);
+}
+
+.activity-output pre.bad {
+  color: var(--danger);
+}
+
+@keyframes activity-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Used by the activity block and by the composer's Voice button, so it is not
+   scoped to either. */
+.spin {
+  animation: activity-spin 1s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spin {
+    animation: none;
+  }
+}
+
+/* --- tool-call card (contract surface) ----------------------------------- *
+ * A compact card: a head with command/args and a status indicator, and a body
+ * with long output. Used by new transcript surfaces. */
+.tool-card {
+  border: 1px solid var(--tool-card-border);
+  border-radius: var(--radius-md);
+  background: var(--tool-card-bg);
+  margin-bottom: var(--s-8);
+  overflow: hidden;
+}
+
+.tool-card .head {
+  display: flex;
+  align-items: center;
+  gap: var(--s-8);
+  padding: var(--s-8) var(--s-12);
+  font: var(--t-caption);
+  color: var(--fg-muted);
+  background: var(--tool-card-head-bg);
+  border-bottom: 1px solid var(--tool-card-border);
+}
+
+.tool-card .head strong {
+  color: var(--fg);
+  font-family: var(--font-mono);
+}
+
+.tool-card .body {
+  padding: var(--s-12);
+  font: 12px/1.5 var(--font-mono);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 320px;
+  overflow: auto;
+  color: var(--code-fg);
+  background: var(--code-bg);
+}
+
+/* --- trace (long-running work, legible at a glance) ---------------------- */
+.trace {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  font: var(--t-caption);
+}
+
+.trace > summary {
+  cursor: pointer;
+  user-select: none;
+}
+
+.trace-line {
+  display: flex;
+  align-items: center;
+  gap: var(--s-8);
+  padding: var(--s-4) var(--s-8);
+  border-radius: var(--radius-sm);
+  color: var(--fg-2);
+  font-family: var(--font-mono);
+}
+
+.trace-line:hover {
+  background: var(--surface-hover);
+}

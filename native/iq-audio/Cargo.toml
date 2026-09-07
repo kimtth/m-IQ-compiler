@@ -1,0 +1,27 @@
+[package]
+name = "iq-audio"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.77"
+description = "Native audio capture sidecar for IQ Compiler: microphone and system loopback, mixed to WAV."
+license = "MIT"
+
+[[bin]]
+name = "iq-audio"
+path = "src/main.rs"
+
+[dependencies]
+# Device enumeration and capture. On Windows this is WASAPI, which gives real
+# loopback capture of the system output — the reason this crate exists at all.
+cpal = "0.15"
+# WAV writing. whisper.cpp and Azure both accept 16 kHz mono PCM, which is what
+# this writes, so no conversion step is needed downstream.
+hound = "3.5"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[profile.release]
+# The sidecar is spawned per recording, so startup matters more than a few
+# hundred kilobytes of binary.
+opt-level = 2
+strip = true

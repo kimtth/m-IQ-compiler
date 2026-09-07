@@ -1,0 +1,113 @@
+/* --- Office live preview -------------------------------------------------
+   The index sits beside the frame rather than inside it. The rendered document
+   is agent output shown in a `sandbox=""` iframe, so nothing in there can react
+   to a click; drawing the list out here is what makes it a real control.
+   A fixed column, like the knowledge file list: it is an inventory, and the
+   preview is what benefits from the room. */
+.preview-split {
+  display: flex;
+  gap: var(--s-12);
+  margin-top: var(--s-8);
+  min-width: 0;
+}
+
+/* The stage owns the visible area and clips. It has to: the frame inside it is
+   drawn at the slide's full design width and scaled down with `transform`,
+   which does not affect layout — so without a sized, clipping parent the frame
+   would take 1280px of room and crop the slide.
+
+   `zoom` was tried instead and measured in a browser: on an iframe it does
+   nothing whatsoever, and on a wrapper div it is no better. Do not "simplify"
+   this back to zoom. */
+.preview-stage {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 60vh;
+  overflow: hidden;
+  border-radius: var(--radius);
+  background: var(--bg-base);
+}
+
+/* The true-to-file render. Contained rather than stretched: it is a photograph
+   of the document, and scaling it up would invent detail in the one view whose
+   whole point is that it does not. */
+.preview-render {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.slide-index {
+  display: flex;
+  flex-direction: column;
+  width: 200px;
+  flex-shrink: 0;
+  /* Matches the frame's height so a long deck scrolls its own list rather than
+     stretching the card. */
+  height: 60vh;
+  overflow-y: auto;
+  padding: var(--s-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+}
+
+.slide-index-item {
+  display: grid;
+  /* Number column is fixed so every label starts at the same x, whatever the
+     slide count. */
+  grid-template-columns: 22px 1fr;
+  align-items: baseline;
+  gap: var(--s-8);
+  width: 100%;
+  padding: var(--s-8);
+  border: 0;
+  /* A rule between rows, not a gap. Titles wrap to two lines, and with spacing
+     alone one row's second line reads as the next row's first — which is what
+     made a six-slide index look like one paragraph. */
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+  background: transparent;
+  color: var(--fg-2);
+  text-align: left;
+  cursor: pointer;
+}
+
+.slide-index-item:last-child {
+  border-bottom: 0;
+}
+
+.slide-index-item:hover {
+  background: var(--surface-hover);
+  color: var(--fg);
+}
+
+.slide-index-item.active {
+  background: var(--surface-active);
+  color: var(--fg);
+}
+
+.slide-index-item .num {
+  font: var(--t-caption);
+  font-family: var(--font-mono);
+  color: var(--fg-muted);
+}
+
+.slide-index-item.active .num {
+  color: var(--accent);
+}
+
+/* Two lines, then an ellipsis. Uniform row heights are what make the list
+   scannable; an unbounded title turns the index into prose. */
+.slide-index-item .label {
+  font: var(--t-caption);
+  line-height: 1.35;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}

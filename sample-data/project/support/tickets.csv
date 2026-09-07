@@ -1,0 +1,13 @@
+ticket_id,account_ref,plan,release,region,monthly_calls,symptom,component,engineer_hours,credit_usd,opened
+TKT-88101,ACC-4K291,growth,24.2.4,eu-west,8420,Payout export will not download,formkit,0.6,25,2026-01-08
+TKT-88117,ACC-4K318,growth,24.2.4,eu-west,9105,Payout export will not download,formkit,0.6,25,2026-01-11
+TKT-88140,ACC-4K402,scale,24.3.0,eu-central,6330,Dashboard blank on session resume,chart-kit,1.2,188,2026-01-14
+TKT-88166,ACC-4K455,scale,24.3.0,eu-central,7188,Dashboard blank on session resume,chart-kit,1.2,188,2026-01-17
+TKT-88190,ACC-4K470,growth,24.3.0,eu-west,5044,Dashboard blank on session resume,chart-kit,1.2,188,2026-01-19
+TKT-88203,ACC-4K512,scale,24.3.1,eu-west,11290,Dashboard blank on session resume,chart-kit,1.2,188,2026-01-21
+TKT-88244,ACC-4K566,enterprise,24.2.4,us-east,14877,Grid columns drift on resize,render-grid,0.9,131,2026-01-24
+TKT-88251,ACC-4K588,enterprise,24.2.4,us-east,13401,Grid columns drift on resize,render-grid,0.9,131,2026-01-25
+TKT-88277,ACC-4K601,enterprise,24.3.2,us-east,9962,Dashboard blank on session resume,chart-kit,1.2,188,2026-01-28
+TKT-88290,ACC-4K644,growth,24.3.2,eu-west,4118,Dashboard blank on session resume,chart-kit,1.2,188,2026-01-30
+TKT-88312,ACC-4K690,growth,24.3.3,eu-central,3877,Dashboard blank on session resume,chart-kit,1.2,188,2026-02-02
+TKT-88330,ACC-4K705,scale,24.3.3,eu-central,2904,Dashboard blank on session resume,chart-kit,1.2,188,2026-02-04

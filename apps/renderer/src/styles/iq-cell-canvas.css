@@ -1,0 +1,286 @@
+/* ==========================================================================
+ * IQ Workflow canvas.
+ *
+ * The seven shapes, the arrows and the words on them. The outlines are CSS —
+ * a border radius for four of them, a rotated square for the diamond — so the
+ * node components carry no geometry and a theme change happens here.
+ *
+ * React Flow ships its own stylesheet, imported from `Flow.tsx`. Everything
+ * below either sits inside a custom node or overrides one of the library's
+ * chrome classes; the canvas is never selected on `.react-flow__node` or
+ * `.react-flow__edge`, because those are its names and the tests use ours.
+ * ====================================================================== */
+
+.flow-canvas {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--bg-base);
+}
+
+/* React Flow measures itself against its container, which has to be told it
+   fills the grid cell rather than sizing to its content. */
+.flow-canvas .react-flow {
+  width: 100%;
+  height: 100%;
+}
+
+/* ── the shapes ───────────────────────────────────────────────────────────
+ * Every node is the same two layers: an outline that carries the shape, and a
+ * body that carries the words. The body never inherits the outline's geometry,
+ * which is what keeps a label readable inside a diamond.
+ */
+.iq-node {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-width: 168px;
+  max-width: 232px;
+  min-height: 56px;
+  padding: var(--s-8) var(--s-12);
+  font: var(--t-caption);
+  color: var(--fg);
+  cursor: grab;
+  user-select: none;
+}
+
+.iq-shape {
+  position: absolute;
+  inset: 0;
+  border: 1px solid var(--stroke);
+  background: var(--surface);
+  box-shadow: var(--shadow-2);
+  transition:
+    border-color var(--dur-fast) var(--ease),
+    box-shadow var(--dur-fast) var(--ease);
+}
+
+.iq-body {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: center;
+  text-align: center;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.iq-label {
+  font-weight: 600;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.iq-detail {
+  color: var(--fg-muted);
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.iq-rename {
+  width: 100%;
+  font: var(--t-caption);
+  font-weight: 600;
+  text-align: center;
+}
+
+/* Stadium — where the flow begins, and each outcome. */
+.iq-stadium {
+  min-height: 48px;
+}
+
+.iq-stadium .iq-shape {
+  border-radius: var(--radius-circular);
+}
+
+/* Box — someone or something does work. */
+.iq-box .iq-shape {
+  border-radius: var(--radius-md);
+}
+
+/* Round — a document, record or dataset. */
+.iq-round .iq-shape {
+  border-radius: 18px;
+}
+
+/* Subroutine — a flow described elsewhere. The two inner rules are the Mermaid
+   `[[ ]]` bars, drawn as insets so they follow the box exactly. */
+.iq-subroutine .iq-shape {
+  border-radius: var(--radius-md);
+  box-shadow:
+    var(--shadow-2),
+    inset 5px 0 0 -4px var(--stroke),
+    inset -5px 0 0 -4px var(--stroke);
+}
+
+/* Diamond — a decision. A square rotated 45°, so the outline is a real border
+   rather than a clip path with nothing to stroke. The body is not rotated, so
+   the question reads horizontally. */
+.iq-diamond {
+  width: 168px;
+  height: 168px;
+  min-width: 168px;
+  max-width: 168px;
+  padding: 42px;
+}
+
+.iq-diamond .iq-shape {
+  inset: 22px;
+  border-radius: var(--radius-md);
+  transform: rotate(45deg);
+}
+
+/* ── node state ─────────────────────────────────────────────────────────── */
+
+.iq-node:hover .iq-shape {
+  box-shadow: var(--shadow-8);
+}
+
+.iq-node.selected .iq-shape {
+  border-color: var(--primary);
+  box-shadow: var(--shadow-8);
+}
+
+.iq-node.flag-warning .iq-shape {
+  border-color: var(--warning);
+}
+
+.iq-node.flag-error .iq-shape {
+  border-color: var(--danger);
+}
+
+/* A note is a remark about the diagram, not a step in it, so it is drawn as
+   something the eye skips rather than reads as work. It is never exported. */
+.iq-node[data-flow-node="note"] .iq-shape {
+  border-style: dashed;
+  background: var(--surface-alt);
+}
+
+/* A kind this vocabulary no longer offers. Marked plainly: the diagram still
+   opens, and the reader is told exactly which step to replace. */
+.iq-retired-wrap .iq-shape {
+  border-style: dotted;
+  border-color: var(--danger);
+  background: var(--danger-tint);
+}
+
+/* ── handles ─────────────────────────────────────────────────────────────
+ * Four per node, one per side. They stay out of the way until the node is
+ * hovered or selected, because a diagram being read should look like a diagram
+ * rather than a wiring loom.
+ */
+.iq-handle.react-flow__handle {
+  width: 9px;
+  height: 9px;
+  border: 1.5px solid var(--primary);
+  background: var(--surface);
+  opacity: 0;
+  transition: opacity var(--dur-fast) var(--ease);
+}
+
+.iq-node:hover .iq-handle.react-flow__handle,
+.iq-node.selected .iq-handle.react-flow__handle {
+  opacity: 1;
+}
+
+/* ── arrows ─────────────────────────────────────────────────────────────── */
+
+.iq-edge {
+  stroke: var(--port-control);
+  stroke-width: 1.75;
+}
+
+.iq-edge.dashed {
+  stroke-dasharray: 5 4;
+}
+
+.iq-edge.selected {
+  stroke: var(--primary);
+  stroke-width: 2.5;
+}
+
+/* The mark that travels the arrow, saying which way the work goes. It carries
+   no state — nothing on this canvas runs — so it is quiet enough to read past.
+   Teal rather than the arrow's own grey: the mark has to be findable against
+   the line it sits on, and this is the one colour on the canvas that is not
+   already spoken for by selection, warnings or errors. */
+.iq-edge-flow {
+  fill: #00bba7;
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+/* Motion that repeats forever is exactly what this setting is asking about,
+   and the direction is still given by the arrowhead without it. */
+@media (prefers-reduced-motion: reduce) {
+  .iq-edge-flow {
+    display: none;
+  }
+}
+
+.iq-edge-label {
+  position: absolute;
+  pointer-events: all;
+  padding: 1px var(--s-8);
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-circular);
+  background: var(--surface);
+  font: var(--t-caption);
+  color: var(--fg-2);
+  cursor: text;
+  max-width: 180px;
+}
+
+.iq-edge-label input {
+  width: 120px;
+  font: var(--t-caption);
+}
+
+/* ── the shape mark ──────────────────────────────────────────────────────
+ * The same five outlines at 18px, used by the palette, the inspector title and
+ * the outline list, so a kind is recognised by its shape everywhere it appears
+ * rather than by an icon that has to be kept in step with it.
+ */
+.shape-mark {
+  flex: 0 0 auto;
+  display: inline-block;
+  width: 18px;
+  height: 12px;
+  border: 1.5px solid var(--fg-muted);
+  background: none;
+}
+
+.shape-mark.stadium {
+  border-radius: var(--radius-circular);
+}
+
+.shape-mark.box {
+  border-radius: 2px;
+}
+
+.shape-mark.round {
+  border-radius: 6px;
+}
+
+.shape-mark.subroutine {
+  border-radius: 2px;
+  box-shadow:
+    inset 4px 0 0 -3px var(--fg-muted),
+    inset -4px 0 0 -3px var(--fg-muted);
+}
+
+.shape-mark.diamond {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  transform: rotate(45deg);
+}

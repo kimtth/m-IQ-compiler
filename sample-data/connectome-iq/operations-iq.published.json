@@ -1,0 +1,93 @@
+{
+  "schemaVersion": 1,
+  "publishedAt": "2026-01-09T06:05:00.000Z",
+  "name": "Operations IQ",
+  "shared": true,
+  "sampleDataOnly": true,
+  "cells": [
+    {
+      "id": "cell_ops_readiness",
+      "name": "Run the morning readiness check",
+      "version": 11,
+      "origin": "editor",
+      "faces": [
+        "Walk the standing checklist",
+        "Record what is not ready"
+      ],
+      "reach": ["Operations files"],
+      "runs": 640,
+      "completionRate": 0.99,
+      "approver": "yuki"
+    },
+    {
+      "id": "cell_ops_handover",
+      "name": "Write the shift handover",
+      "version": 7,
+      "origin": "editor",
+      "faces": [
+        "Summarise what the next shift needs to know",
+        "Say what was left open"
+      ],
+      "reach": ["Operations files"],
+      "runs": 618,
+      "completionRate": 0.98,
+      "approver": "yuki"
+    },
+    {
+      "id": "cell_ops_chase",
+      "name": "Chase what the check left open",
+      "version": 3,
+      "origin": "editor",
+      "faces": ["Follow up every item the readiness check recorded as not ready"],
+      "reach": ["Operations files", "Microsoft 365 calendar"],
+      "runs": 210,
+      "completionRate": 0.82,
+      "approver": "yuki"
+    }
+  ],
+  "connectome": {
+    "hash": "c48e2071",
+    "nodeCount": 3,
+    "edgeCount": 12,
+    "windowDays": 90,
+    "findings": [
+      {
+        "kind": "fragility",
+        "title": "The chase cell completes least often of the three",
+        "detail": "82% against 98% and 99%. It is the only one that waits on someone outside operations.",
+        "action": "Look at what it is waiting for before treating the number as a fault."
+      },
+      {
+        "kind": "redundancy",
+        "title": "Readiness and handover are the most tightly coupled pair here",
+        "detail": "They share every declared path and run within the same hour on 92% of days.",
+        "action": "Change them together or neither."
+      }
+    ],
+    "limits": [
+      "Run history covers 90 days.",
+      "Weekend shifts are in the window but are a fifth of the runs, so weekend-only patterns are weak."
+    ],
+    "generatedAt": "2026-01-09T06:04:31.000Z"
+  },
+  "memories": [
+    {
+      "id": "mem_ops_handover",
+      "subject": "operations",
+      "fact": "A handover names open items even when there are none.",
+      "memoryType": "convention",
+      "status": "approved"
+    },
+    {
+      "id": "mem_ops_before_shift",
+      "subject": "operations",
+      "fact": "The readiness check runs before the shift, never during it.",
+      "memoryType": "convention",
+      "status": "approved"
+    }
+  ],
+  "notes": [
+    { "path": "operations/readiness.md", "title": "The morning readiness checklist" },
+    { "path": "operations/handover.md", "title": "What a handover has to say" }
+  ]
+}

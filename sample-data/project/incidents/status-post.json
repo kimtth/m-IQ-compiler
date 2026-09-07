@@ -1,0 +1,28 @@
+{
+  "postId": "STATUS-2026-014",
+  "status": "draft",
+  "published": null,
+  "service": "web-console",
+  "title": "Dashboard blank on session resume after release 24.3",
+  "affected": {
+    "releases": ["24.3.0", "24.3.1", "24.3.2", "24.3.3"],
+    "appVersion": "24.3",
+    "component": "chart-kit",
+    "regions": ["eu-west", "eu-central", "us-east", "ap-south"]
+  },
+  "symptom": "The dashboard stays blank for 3 to 10 seconds after a session resumes. It fills in on its own and nothing is written to the error log.",
+  "diagnosis": "Under investigation. Tickets start in the week 24.3 reached general release, and no account still on 24.2 or earlier has reported it.",
+  "interimAction": "Do not roll the account back. Record the account reference, the region and whether the tab had been idle for more than eight hours, and attach the session resume trace.",
+  "rollbackAuthorised": false,
+  "ticketTags": ["console-resume-blank"],
+  "openQuestions": [
+    "Is the fault in chart-kit's mount path or in the session refresh broadcast from the auth SDK?",
+    "Does pinning 24.2 clear it? No account has been pinned back yet.",
+    "Community forum posts predate the first ticket by roughly two weeks — are those the same failure?"
+  ],
+  "approvals": {
+    "engineering": null,
+    "support": null,
+    "security": null
+  }
+}

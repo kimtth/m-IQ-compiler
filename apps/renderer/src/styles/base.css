@@ -1,0 +1,68 @@
+
+/**
+ * Application styles.
+ *
+ * Structure follows the Co-create layout: icon rail · chat · canvas · workspace
+ * navigator. The single rule that keeps that layout stable is that the
+ * container owns sizing — panes never size themselves from their content.
+ */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font: var(--t-body);
+  /* Geist is already generously spaced. The extra 0.01em on top of it left
+     every label looking slightly stretched, which at 13px reads as a screen
+     that has not been tuned. Display sizes get negative tracking instead,
+     where it belongs. */
+  letter-spacing: normal;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Display type gets negative tracking. Type set at one spacing from 11px to
+   28px looks loose at the top of that range — large text needs less air
+   between letters, not the same amount — and headings are where a screen is
+   judged before a word of it is read. */
+h1,
+h2,
+.pane-title {
+  letter-spacing: -0.012em;
+}
+
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+  border-radius: var(--radius-sm);
+}
+
+/* Scrollbars themed from the scale, so a scrolling pane never looks unpainted. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--stroke-strong) transparent;
+}
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-thumb {
+  background: var(--stroke-strong);
+  border: 3px solid transparent;
+  background-clip: padding-box;
+  border-radius: var(--radius-circular);
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--fg-disabled);
+  background-clip: padding-box;
+}

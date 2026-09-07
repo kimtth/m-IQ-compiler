@@ -1,0 +1,101 @@
+/* --- workspace navigator ------------------------------------------------- */
+
+.tree {
+  padding: var(--s-4) 0;
+}
+
+.tree-row {
+  display: flex;
+  align-items: center;
+  gap: var(--s-8);
+  width: 100%;
+  background: none;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 4px var(--s-8);
+  color: var(--fg-2);
+  text-align: left;
+  white-space: nowrap;
+  transition: background var(--dur-fast) var(--ease);
+}
+
+.tree-row:hover {
+  background: var(--surface-hover);
+}
+
+.tree-row.selected {
+  background: var(--accent-surface);
+  color: var(--accent-surface-foreground);
+}
+
+/* A file the agent is writing right now must be visible without hunting. */
+.tree-row.touched {
+  box-shadow: inset 2px 0 0 var(--warning);
+}
+
+.tree-row .name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tree-row .glyph {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  display: grid;
+  place-items: center;
+  color: var(--fg-muted);
+}
+
+/* Right-click menu for a workspace file. Positioned at the cursor, so it is
+   fixed rather than absolute: the tree scrolls under it. */
+.context-menu {
+  position: fixed;
+  z-index: 60;
+  min-width: 200px;
+  padding: var(--s-4);
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  /* Same void token as .rail-new-menu had — see the note there. */
+  box-shadow: var(--shadow-16);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.context-menu-title {
+  padding: 4px var(--s-8);
+  color: var(--fg-muted);
+  font-size: 11px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* A hairline between two kinds of item in one menu — used where the items
+   below it are not the same sort of thing as the ones above. */
+.menu-separator {
+  height: 1px;
+  margin: var(--s-4) 0;
+  background: var(--stroke);
+}
+
+.context-menu button {
+  display: flex;
+  align-items: center;
+  gap: var(--s-8);
+  width: 100%;
+  background: none;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 6px var(--s-8);
+  color: var(--fg-2);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.context-menu button:hover {
+  background: var(--surface-hover);
+  color: var(--fg-1);
+}

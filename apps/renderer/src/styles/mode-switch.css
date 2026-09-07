@@ -1,0 +1,330 @@
+/* --- mode switch --------------------------------------------------------- */
+
+/* Starting a conversation, above the mode switch and above everything else.
+
+   Styled as an action rather than as a rail destination, because it is one:
+   the rows below it go somewhere, this makes something. `flex: 0 0 auto` for
+   the same reason every other rail row has it — the rail can overflow, and a
+   button squeezed to nothing is a button nobody can press.
+
+   Split into two: the button, and a chevron that opens the destination picker.
+   The row is the positioning context for the menu, so it is relative.
+
+   A hairline under it, the same one the mode switch carries. This row makes
+   something and the rows below it go somewhere; the line is what says the
+   two are different kinds of thing. */
+.rail-new-row {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  gap: 2px;
+  flex: 0 0 auto;
+  width: 100%;
+  padding-bottom: var(--s-8);
+  border-bottom: 1px solid var(--sidebar-border);
+}
+
+.rail-new {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-8);
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 8px;
+  border: 1px solid var(--sidebar-border);
+  border-radius: var(--radius-md);
+  background: var(--sidebar-accent);
+  color: var(--sidebar-foreground);
+  font: var(--t-dense);
+  font-weight: 600;
+}
+
+.rail-new-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 30px;
+  padding: 0;
+  border: 1px solid var(--sidebar-border);
+  border-radius: var(--radius-md);
+  background: var(--sidebar-accent);
+  color: var(--sidebar-foreground);
+}
+
+/* Home, at the same size as the chevron and on the other end of the row. It is
+   an icon alone because its name is the picture: a house is the one glyph
+   nobody has to be taught, and spending a third of the row on the word "Home"
+   would push New conversation into two lines. */
+.rail-home {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 30px;
+  padding: 0;
+  border: 1px solid var(--sidebar-border);
+  border-radius: var(--radius-md);
+  background: var(--sidebar-accent);
+  color: var(--sidebar-foreground);
+}
+
+/* Home is the only one of the three that can be the current place, so it is
+   the only one that carries a selected state. */
+.rail-home.active {
+  background: var(--surface-active);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.rail-new:hover,
+.rail-home:hover,
+.rail-new-more:hover,
+.rail-new-more[aria-expanded="true"] {
+  background: var(--surface-active);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* Dismissal without a document listener: the click that closes the menu is
+   swallowed here rather than landing on whatever it was over. */
+.menu-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 59;
+}
+
+/* The modal dialog. Same dismissal device as .menu-scrim, one layer above the
+   rail menu so a dialog raised while a menu is open is not painted under it. */
+.modal-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  background: rgb(0 0 0 / 45%);
+}
+
+.modal-card {
+  position: fixed;
+  z-index: 81;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(560px, calc(100vw - var(--s-32)));
+  max-height: calc(100vh - var(--s-32));
+  display: flex;
+  flex-direction: column;
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-16);
+}
+
+.modal-card:focus {
+  outline: none;
+}
+
+.modal-head,
+.modal-foot {
+  display: flex;
+  align-items: center;
+  gap: var(--s-8);
+  padding: var(--s-12) var(--s-16);
+}
+
+.modal-head {
+  border-bottom: 1px solid var(--border);
+}
+
+.modal-foot {
+  border-top: 1px solid var(--border);
+  justify-content: flex-end;
+}
+
+/* Pushes what follows it to the right. A footer with a reset in it has two
+   kinds of button — one that undoes and two that leave — and they must not
+   read as a row of three equal choices. */
+.modal-foot .spacer {
+  flex: 1 1 auto;
+}
+
+.modal-body {
+  padding: var(--s-16);
+  overflow: auto;
+}
+
+.modal-body p {
+  margin: 0 0 var(--s-12);
+}
+
+/* Rows in a modal that are choices rather than readouts.
+   Each row is a whole button: the target is the row, not the four words of its
+   name, because the thing being picked is a GUID nobody can verify by eye. */
+.picker-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+}
+
+.picker-row {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s-2);
+  width: 100%;
+  text-align: left;
+  padding: var(--s-8) var(--s-12);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.picker-row:hover {
+  background: var(--surface-hover);
+}
+
+.picker-row[aria-current="true"] {
+  border-color: var(--primary);
+  background: var(--surface-selected);
+}
+
+/* The client configuration. It is meant to be copied whole, so it scrolls
+   rather than wrapping — a wrapped JSON snippet reads as broken JSON. */
+.modal-body pre {
+  margin: 0;
+  padding: var(--s-12);
+  background: var(--surface-sunken);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: auto;
+  max-height: 220px;
+  font: var(--t-caption);
+  font-family: var(--font-mono);
+  white-space: pre;
+}
+
+/* Anchored under the row, not at the cursor — this menu belongs to a control
+   that stays put, unlike the file tree's right-click menu. */
+.rail-new-menu {
+  position: absolute;
+  z-index: 60;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  min-width: 220px;
+  padding: var(--s-4);
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  /* --shadow-lg does not exist in the ramp, so this declaration was void and
+     the menu drew flat. Real tokens are --shadow-2/4/8/16. */
+  box-shadow: var(--shadow-16);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.rail-new-menu button {
+  display: grid;
+  grid-template-columns: 14px 1fr;
+  align-items: center;
+  gap: 2px var(--s-8);
+  width: 100%;
+  background: none;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 6px var(--s-8);
+  color: var(--fg-2);
+  text-align: left;
+}
+
+.rail-new-menu button:hover {
+  background: var(--surface-hover);
+  color: var(--fg-1);
+}
+
+/* The glyph spans both rows of the entry, whether it is drawn as a line icon
+   or as a product mark. */
+.rail-new-menu button > svg,
+.rail-new-menu button > .brand-mark {
+  grid-row: 1 / span 2;
+}
+
+/* The consequence line. Each destination is a different arrangement of the
+   window, and the label alone does not say which — "Fabric" and "Office" read
+   as two names for the same thing until you have used both. Wraps to as many
+   lines as it needs: a half-read consequence is worse than none. */
+.rail-new-menu .detail {
+  grid-column: 2;
+  min-width: 0;
+  font: var(--t-caption);
+  color: var(--fg-muted);
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+/* The one control that never collapses: the mode segments pinned to the top of
+   the rail.
+
+   No fill of its own. A tinted track holding a tinted active segment is two
+   plates for one word, and it was the first thing in the window — top-left
+   corner, above everything — so it set the tone for the whole rail. The
+   active segment is the only thing here that is painted, which is what makes
+   it read as selected.
+
+   A hairline under the group instead. It has to be told apart from the
+   destinations below it — these are the ways work is done, those are places
+   to go — and a line says that without spending a colour on it. */
+.mode-switch {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  flex: 0 0 auto;
+  padding: 0 0 var(--s-8);
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--sidebar-border);
+}
+
+.mode-segment {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--s-8);
+  background: none;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  padding: 8px;
+  color: var(--muted-foreground);
+  font: var(--t-dense);
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  transition:
+    background var(--dur-normal) var(--ease),
+    color var(--dur-normal) var(--ease),
+    box-shadow var(--dur-normal) var(--ease);
+}
+
+.mode-segment .glyph {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+}
+
+.mode-segment:hover {
+  color: var(--fg);
+  background: var(--surface-hover);
+}
+
+/* One colour for every selected mode. A different hue per segment made the
+   corner of the window change colour as you moved between modes, and the hue
+   carried no meaning of its own — the label already says which mode is open. */
+.mode-segment.active {
+  color: var(--azure-blue);
+  background: color-mix(in srgb, var(--azure-blue) 10%, var(--card));
+  border-color: color-mix(in srgb, var(--azure-blue) 26%, var(--border));
+  box-shadow: var(--shadow-2);
+}

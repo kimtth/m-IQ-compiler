@@ -1,0 +1,110 @@
+{
+  "kind": "iq.flow",
+  "version": 1,
+  "flow": {
+    "id": "flow_e2e_advisory",
+    "name": "Security advisory watch",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "An advisory is published",
+        "config": { "trigger": "Advisory feed, checked every morning" },
+        "notes": "Scoped by the feed's publishing schedule, not the team's sprint."
+      },
+      {
+        "id": "n2",
+        "kind": "step",
+        "label": "Security reads the published advisories",
+        "config": {
+          "owner": "Security engineer",
+          "system": "Advisory feed",
+          "duration": "half a day"
+        },
+        "notes": "Auth, serialisation and rendering are the three that move most often."
+      },
+      {
+        "id": "n3",
+        "kind": "data",
+        "label": "Dependency inventory",
+        "config": { "format": "Record", "system": "Service catalogue" },
+        "notes": "Each entry names the version that is actually deployed."
+      },
+      {
+        "id": "n4",
+        "kind": "step",
+        "label": "Engineer diffs the advisory against each service",
+        "config": {
+          "owner": "Security engineer",
+          "system": "Service catalogue",
+          "duration": "2 days"
+        },
+        "notes": "An advisory with no matching entry is recorded as unverified, not as safe."
+      },
+      {
+        "id": "n5",
+        "kind": "decision",
+        "label": "Does it block a release?",
+        "config": {
+          "question": "Is a release blocked until the package is upgraded?",
+          "criteria": "The advisory affects a version deployed before the planned release date"
+        },
+        "notes": ""
+      },
+      {
+        "id": "n6",
+        "kind": "subflow",
+        "label": "Emergency upgrade",
+        "config": { "flow": "Emergency upgrade with the service owner" },
+        "notes": ""
+      },
+      {
+        "id": "n7",
+        "kind": "step",
+        "label": "Record what was checked",
+        "config": {
+          "owner": "Security engineer",
+          "system": "Advisory watch log",
+          "duration": "30 minutes"
+        },
+        "notes": "So tomorrow's check reports the delta rather than the whole feed again."
+      },
+      {
+        "id": "n8",
+        "kind": "end",
+        "label": "Upgrade under way",
+        "config": { "outcome": "The release date is reforecast with the service owner" },
+        "notes": ""
+      },
+      {
+        "id": "n9",
+        "kind": "end",
+        "label": "No action needed",
+        "config": { "outcome": "Logged, and reviewed again at the next advisory sweep" },
+        "notes": ""
+      }
+    ],
+    "edges": [
+      { "id": "e1", "from": "n1", "to": "n2", "label": "", "style": "solid" },
+      { "id": "e2", "from": "n2", "to": "n3", "label": "", "style": "solid" },
+      { "id": "e3", "from": "n3", "to": "n4", "label": "", "style": "solid" },
+      { "id": "e4", "from": "n4", "to": "n5", "label": "", "style": "solid" },
+      { "id": "e5", "from": "n5", "to": "n6", "label": "Yes", "style": "solid" },
+      { "id": "e6", "from": "n5", "to": "n7", "label": "No", "style": "solid" },
+      { "id": "e7", "from": "n6", "to": "n8", "label": "", "style": "solid" },
+      { "id": "e8", "from": "n7", "to": "n9", "label": "", "style": "solid" }
+    ]
+  },
+  "layout": {
+    "n1": { "x": 120, "y": 60 },
+    "n2": { "x": 120, "y": 204 },
+    "n3": { "x": 120, "y": 348 },
+    "n4": { "x": 120, "y": 492 },
+    "n5": { "x": 120, "y": 636 },
+    "n6": { "x": 120, "y": 816 },
+    "n7": { "x": 380, "y": 816 },
+    "n8": { "x": 120, "y": 960 },
+    "n9": { "x": 380, "y": 960 }
+  },
+  "description": "# Security advisory watch\n\nHow published advisories get checked against the versions actually deployed, and how a release-blocking one reaches the service owner.\n\nNothing here runs. It is a picture of the process, drawn so the people in it agree on the same one.\n"
+}

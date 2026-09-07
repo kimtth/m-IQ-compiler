@@ -1,0 +1,13 @@
+date,run,pipeline,suite,failure_code,description,tests_run,failures,rerun_minutes
+2026-02-02,morning,ci-main,Checkout API contract,API-118,Response time over the agreed budget,412,3,54
+2026-02-02,morning,ci-main,Secret rotation,SEC-002,Lease renewal did not finish before expiry,412,1,90
+2026-02-02,evening,ci-main,Checkout API contract,API-118,Response time over the agreed budget,398,5,88
+2026-02-02,evening,ci-nightly,Migration order,DB-041,Advisory lock released before the migration finished,398,7,63
+2026-02-03,morning,ci-nightly,Migration order,DB-041,Advisory lock released before the migration finished,405,9,81
+2026-02-03,morning,ci-main,Console rendering,RENDER-230,Grid column widths drift between runs,405,12,96
+2026-02-03,evening,ci-main,Console rendering,RENDER-230,Grid column widths drift between runs,401,14,112
+2026-02-04,morning,ci-main,Console rendering,RENDER-230,Grid column widths drift between runs,410,17,136
+2026-02-04,morning,ci-nightly,Migration order,DB-041,Advisory lock released before the migration finished,410,4,36
+2026-02-04,evening,ci-main,Secret rotation,SEC-002,Lease renewal did not finish before expiry,396,2,180
+2026-02-05,morning,ci-main,Console rendering,RENDER-230,Grid column widths drift between runs,408,19,152
+2026-02-05,evening,ci-main,Checkout API contract,API-118,Response time over the agreed budget,399,2,36

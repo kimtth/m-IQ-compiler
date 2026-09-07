@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "name": "IQ Compiler limited industry bundle",
+  "description": "Canonical files and metadata used to reduce the upstream five-primer bundle.",
+  "sourceRepository": "https://github.com/kimtth/IQ-compiler-connectome.git",
+  "sourceSubdirectory": "iq-compiler",
+  "copies": [
+    {
+      "source": "files/software-industry.md",
+      "target": "apps/renderer/src/industry/primers/software-industry.md",
+      "metadata": {
+        "kind": "industry-primer",
+        "id": "software-industry",
+        "title": "Software Industry",
+        "category": "Technology and media"
+      }
+    },
+    {
+      "source": "files/it-consulting-industry.md",
+      "target": "apps/renderer/src/industry/primers/it-consulting-industry.md",
+      "metadata": {
+        "kind": "industry-primer",
+        "id": "it-consulting-industry",
+        "title": "IT Consulting Industry",
+        "category": "Public sector and services"
+      }
+    },
+    {
+      "source": "files/industry-mermaid.test.ts",
+      "target": "tests/industry-mermaid.test.ts",
+      "metadata": {
+        "kind": "dependent-test"
+      }
+    }
+  ],
+  "remove": [
+    "apps/renderer/src/industry/primers/ai-trends-2026.md",
+    "apps/renderer/src/industry/primers/automotive-industry.md",
+    "apps/renderer/src/industry/primers/semiconductor-industry.md"
+  ],
+  "dependentFiles": [
+    "apps/renderer/src/industry/primers.ts",
+    "apps/renderer/src/industry/Industry.tsx",
+    "apps/renderer/src/industry/cells.ts",
+    "apps/renderer/src/industry/mermaid.ts",
+    "apps/renderer/src/styles/iq-industry.css",
+    "sample-data/demo-automation/production-capture.mjs",
+    "tests/iq-industry.test.ts",
+    "tests/e2e/iq-industry.e2e.ts",
+    "tests/e2e/iq-connectome.e2e.ts",
+    "docs/00-agents.md",
+    "docs/02-backlog.md",
+    "docs/07-reference-features.md",
+    "docs/08-product-ready.md"
+  ]
+}

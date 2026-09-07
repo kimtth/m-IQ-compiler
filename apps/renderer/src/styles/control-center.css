@@ -1,0 +1,211 @@
+/* --- Control Center inspector -------------------------------------------- */
+.detail-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-12);
+  padding: var(--s-16);
+  overflow: auto;
+  min-height: 0;
+}
+
+.detail-panel .head {
+  display: flex;
+  align-items: center;
+  gap: var(--s-8);
+}
+
+/* --- chat mode home ------------------------------------------------------ */
+
+/* Chat mode's empty state is a greeting and a composer, not a dashboard. */
+.home {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* `safe` matters. Once the recent list makes the page taller than the
+     window, a plain `center` overflows in both directions: the top of the
+     greeting goes above the scroll origin and cannot be scrolled back to. */
+  justify-content: safe center;
+  gap: var(--s-24);
+  height: 100%;
+  padding: var(--s-32);
+  overflow: auto;
+}
+
+.home h1 {
+  font: var(--t-title);
+  margin: 0;
+  text-align: center;
+}
+
+.home .lede {
+  color: var(--fg-muted);
+  margin: 0;
+  text-align: center;
+}
+
+.home-inner {
+  width: min(720px, 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-16);
+}
+
+.home-orb {
+  position: relative;
+  width: 108px;
+  height: 108px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #ffffff 0 8%, #dbeafe 34%, #ddd6fe 70%, #bfdbfe 100%);
+  box-shadow: 0 12px 32px color-mix(in srgb, var(--intelligence-indigo) 18%, transparent);
+  overflow: hidden;
+}
+
+.orb-core {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: var(--gradient-primary);
+  color: #ffffff;
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--intelligence-violet) 35%, transparent);
+}
+
+.orb-ring {
+  position: absolute;
+  border: 1px solid color-mix(in srgb, var(--azure-blue) 42%, transparent);
+  border-radius: 50%;
+}
+
+.orb-ring-one { width: 74px; height: 74px; }
+.orb-ring-two { width: 100px; height: 42px; transform: rotate(-32deg); }
+
+.orb-node {
+  position: absolute;
+  z-index: 3;
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--card);
+  border-radius: 50%;
+  box-shadow: var(--shadow-2);
+}
+
+.orb-node-one { top: 18px; right: 20px; background: var(--intelligence-cyan); }
+.orb-node-two { bottom: 18px; left: 18px; background: var(--creation-orange); }
+.orb-node-three { bottom: 14px; right: 32px; background: var(--intelligence-violet); }
+
+.home-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-4);
+  margin: 0;
+  color: var(--intelligence-indigo);
+  font: var(--t-meta);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* The greeting, the lede and the starter grid are all centred, so the two
+   controls between them have to be as well. A flex column stretches its items
+   by default, which made the primary button a full-width bar with its label
+   pinned to the left edge — the one thing on the page that was not aligned
+   with anything else on it. */
+.home-inner > .primary,
+.home-inner > .link {
+  align-self: center;
+  justify-content: center;
+}
+
+.starters {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--s-12);
+}
+
+.starter {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s-4);
+  text-align: left;
+  min-width: 0;
+  padding: var(--s-12);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  border: 1px solid var(--stroke);
+  transition:
+    background var(--dur-fast) var(--ease),
+    border-color var(--dur-fast) var(--ease);
+}
+
+/* Hover fills, it does not levitate. Lifting the card, darkening its border
+   and dropping a shadow under it were three answers to one question — is the
+   pointer on this one? — and the transform nudged the text a pixel every time
+   the pointer crossed the grid. */
+.starter:hover {
+  background: var(--surface-hover);
+  border-color: var(--stroke-strong);
+}
+
+.starter .title {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+/* The title is a line of text, so a mark in it has to sit on that line rather
+   than take one of its own. */
+.starter .title .brand-mark {
+  display: inline-block;
+  vertical-align: -2px;
+}
+
+.starter .detail {
+  font: var(--t-caption);
+  color: var(--fg-muted);
+  white-space: normal;
+}
+
+.starter .title > svg {
+  padding: 6px;
+  box-sizing: content-box;
+  border-radius: var(--radius-md);
+  background: var(--accent-surface);
+  color: var(--primary);
+}
+
+.starter-team .title > svg,
+.starter-dataagent .title > svg {
+  background: color-mix(in srgb, var(--azure-blue) 12%, var(--card));
+  color: var(--azure-blue);
+}
+
+.starter-research .title > svg {
+  background: color-mix(in srgb, var(--intelligence-cyan) 13%, var(--card));
+  color: var(--intelligence-cyan);
+}
+
+.starter-office .title > svg,
+.starter-image .title > svg {
+  background: color-mix(in srgb, var(--creation-orange) 13%, var(--card));
+  color: var(--creation-orange);
+}
+
+.starter-record .title > svg {
+  background: color-mix(in srgb, var(--intelligence-violet) 13%, var(--card));
+  color: var(--intelligence-violet);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-orb,
+  .orb-core {
+    box-shadow: none;
+  }
+}

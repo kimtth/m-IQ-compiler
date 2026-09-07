@@ -1,0 +1,1064 @@
+/* -- Connectome IQ ----------------------------------------------------- */
+
+.iq-hub {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+}
+
+/* The organization and the selected function, side by side. The chart is the
+   work and takes the larger share; the detail column reads top to bottom. */
+.iq-hub-body {
+  flex: 1 1 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: stretch;
+  min-height: 0;
+  min-width: 0;
+  padding: var(--s-16);
+  gap: var(--s-12);
+  overflow: hidden;
+}
+
+.iq-hub-body.detail-open {
+  grid-template-columns: minmax(560px, 1.9fr) minmax(340px, 0.85fr);
+}
+
+/* Shared detail-card rules also apply to the current right-hand detail pane. */
+.iq-hub-detail {
+  flex: 1 1 auto;
+  min-height: 300px;
+  min-width: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: var(--s-12);
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: var(--s-16);
+  background: color-mix(in srgb, var(--stroke) 45%, var(--bg-2));
+  border: 1px solid var(--stroke-strong);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-2);
+}
+
+/* Nothing picked is one line of text, and a tall panel around it would be a
+   pane the surface is holding open for nothing. It shrinks to the line and
+   hands the rest to the picker. */
+.iq-hub-detail.empty {
+  flex: 0 0 auto;
+  min-height: 0;
+  padding: var(--s-12) var(--s-16);
+  overflow: hidden;
+}
+
+.iq-hub-detail > .card {
+  flex: 1 1 280px;
+  min-width: 260px;
+  margin: 0;
+  overflow: auto;
+}
+
+/* The tool console is the point of the panel, and the only card here holding
+   output that must not be re-wrapped to death. It gets roughly two columns'
+   worth of the room the others share.
+
+   Laid out as a column here rather than by the `:has(pre.source)` rule further
+   down, because an empty transcript has no `pre` in it yet — and a console that
+   only found its height after the first answer left the composer stranded
+   halfway up the card. */
+.iq-hub-detail > .card.iq-hub-console {
+  flex: 2 1 420px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.iq-hub-detail > .card.iq-hub-console > * {
+  flex: 0 0 auto;
+}
+
+/* The box is the control, so the input inside carries no border and no ring of
+   its own. Two rings around one field reads as two fields. */
+.iq-hub-search {
+  flex: 1 1 260px;
+  min-width: 180px;
+  display: flex;
+  align-items: center;
+  gap: var(--s-8);
+  padding: 0 var(--s-8);
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--fg-muted);
+  transition: border-color var(--dur-fast) var(--ease);
+}
+
+.iq-hub-search:focus-within {
+  border-color: var(--accent);
+}
+
+.iq-hub-search input {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: none;
+  background: none;
+  padding: var(--s-4) 0;
+  font: var(--t-caption);
+  color: var(--fg);
+}
+
+.iq-hub-search input:focus,
+.iq-hub-search input:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+/* The topic list reads as one more toolbar control, not as a form field. */
+.iq-hub-topic {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-4);
+  color: var(--fg-muted);
+}
+
+.iq-hub-topic select {
+  max-width: 180px;
+  padding: var(--s-4) var(--s-8);
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--fg);
+  font: var(--t-caption);
+  cursor: pointer;
+}
+
+.iq-hub-topic select:hover {
+  border-color: var(--stroke-strong);
+}
+
+.iq-hub-count {
+  margin-left: auto;
+  font: var(--t-caption);
+  white-space: nowrap;
+}
+
+/* The detail column is narrow. Left to wrap, the icon takes a line of its own
+   and the paragraph reads as though it lost its bullet. */
+.iq-hub-note {
+  flex-wrap: nowrap;
+  align-items: flex-start;
+}
+
+.iq-hub-note > svg {
+  flex: 0 0 auto;
+  margin-top: 2px;
+}
+
+/* Connected is a state, not a press, so the pressed form is filled rather
+   than merely highlighted. */.iq-hub-connect {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-4);
+  padding: var(--s-2) var(--s-8);
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-sm);
+  background: var(--bg-1);
+  color: var(--text-2);
+  font: var(--t-meta);
+  cursor: pointer;
+}
+
+.iq-hub-connect[aria-pressed="true"] {
+  border-color: var(--accent);
+  background: var(--accent-tint);
+  color: var(--accent);
+}
+
+/* Name over byline, so the two never compete for the same line and a long
+   name pushes the chip nowhere. */
+.iq-hub-card-title {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+/* The name is what the eye is looking for in a grid of cards, so it is the one
+   thing in a card that carries weight. `--t-body` sets no weight of its own, so
+   the shorthand would otherwise flatten the `<strong>` to normal. */
+.iq-hub-card-title > strong {
+  font: var(--t-body);
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.iq-hub-card-title > .muted,
+.iq-hub-detail-head .muted {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-4);
+  font: var(--t-caption);
+  color: var(--fg-muted);
+}
+
+/* The publisher, as a face. Six tints keyed off the owner's name — see the
+   council roster, which does the same thing for the same reason: a column of
+   otherwise identical rows reads as one document, and a person is the thing
+   this directory is a list of. Colour is never the only signal; the name is
+   always beside it. */
+.iq-hub-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-circular);
+  border: 1px solid var(--stroke);
+  background: var(--surface-alt);
+  color: var(--fg-muted);
+  font: var(--t-meta);
+  letter-spacing: 0.02em;
+}
+
+.iq-hub-avatar.seat-0 {
+  background: #eef2ff;
+  border-color: #c7d2fe;
+  color: #4338ca;
+}
+.iq-hub-avatar.seat-1 {
+  background: #ecfdf5;
+  border-color: #a7f3d0;
+  color: #047857;
+}
+.iq-hub-avatar.seat-2 {
+  background: #fff7ed;
+  border-color: #fed7aa;
+  color: #c2410c;
+}
+.iq-hub-avatar.seat-3 {
+  background: #fdf4ff;
+  border-color: #f5d0fe;
+  color: #a21caf;
+}
+.iq-hub-avatar.seat-4 {
+  background: #f0f9ff;
+  border-color: #bae6fd;
+  color: #0369a1;
+}
+.iq-hub-avatar.seat-5 {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #b91c1c;
+}
+
+/* Yours is not one of the six seats. It takes the accent, which is the same
+   distinction the card's tint makes. */
+.iq-hub-avatar.you {
+  background: var(--bg-1);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* Dark theme keeps the hue and swaps the weight: a pale fill that reads as a
+   highlight on white reads as a hole punched in a dark surface. */
+[data-theme="dark"] .iq-hub-avatar.seat-0 {
+  background: #1e1b4b;
+  border-color: #3730a3;
+  color: #a5b4fc;
+}
+[data-theme="dark"] .iq-hub-avatar.seat-1 {
+  background: #052e16;
+  border-color: #166534;
+  color: #6ee7b7;
+}
+[data-theme="dark"] .iq-hub-avatar.seat-2 {
+  background: #431407;
+  border-color: #9a3412;
+  color: #fdba74;
+}
+[data-theme="dark"] .iq-hub-avatar.seat-3 {
+  background: #4a044e;
+  border-color: #a21caf;
+  color: #f0abfc;
+}
+[data-theme="dark"] .iq-hub-avatar.seat-4 {
+  background: #082f49;
+  border-color: #0369a1;
+  color: #7dd3fc;
+}
+[data-theme="dark"] .iq-hub-avatar.seat-5 {
+  background: #450a0a;
+  border-color: #b91c1c;
+  color: #fca5a5;
+}
+
+/* The four counts an IQ carries. They used to run together in one grey
+   sentence, which is the shape a reader skips; behind their own glyphs they
+   are scannable, and the numbers keep the body colour so the label is the only
+   part that recedes. */
+.iq-hub-stats {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-4) var(--s-12);
+  font: var(--t-caption);
+  color: var(--fg-2);
+}
+
+.iq-hub-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-4);
+  white-space: nowrap;
+}
+
+.iq-hub-stat > svg {
+  color: var(--fg-muted);
+}
+
+/* -- the open entry ----------------------------------------------------- */
+
+/* Every heading in the panel is icon-led. Four cards of identical black text
+   is a wall; the glyph is what lets somebody find "Findings" without reading
+   the other three. */
+.iq-hub-detail .card h3,
+.iq-hub-detail .card h4 {
+  display: flex;
+  align-items: center;
+  gap: var(--s-8);
+}
+
+.iq-hub-detail .card h3 > svg,
+.iq-hub-detail .card h4 > svg {
+  color: var(--fg-muted);
+  flex: none;
+}
+
+.iq-hub-detail .card h4 {
+  margin: var(--s-12) 0 var(--s-4);
+  font: var(--t-dense);
+  font-weight: 600;
+}
+
+.iq-hub-detail-head {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-8);
+  margin-bottom: var(--s-8);
+}
+
+.iq-hub-detail-head h3 {
+  margin: 0;
+}
+
+.iq-hub-detail .chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-4);
+  margin-bottom: var(--s-8);
+}
+
+.iq-hub-cell {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  padding: var(--s-8) 0;
+  border-top: 1px solid var(--stroke);
+  font: var(--t-caption);
+}
+
+.iq-hub-cell:first-of-type {
+  border-top: none;
+}
+
+.iq-hub-cell-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-8);
+}
+
+.iq-hub-cell-head > strong {
+  font: var(--t-dense);
+  font-weight: 600;
+}
+
+/* Completion as a small gauge beside its own number. Drawn full width it was
+   a blue rule under every cell — at 90-odd percent the bar is nearly solid, so
+   the shape said "divider" rather than "nearly all of them finished". */
+.iq-hub-meter {
+  display: inline-block;
+  width: 32px;
+  height: 4px;
+  border-radius: var(--radius-circular);
+  background: var(--stroke);
+  overflow: hidden;
+}
+
+.iq-hub-meter > span {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+}
+
+/* A finding is numbered because the actions below refer to them in order. */
+.iq-hub-finding-head {
+  display: flex;
+  align-items: center;
+  gap: var(--s-8);
+}
+
+.iq-hub-finding-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 18px;
+  height: 18px;
+  border-radius: var(--radius-circular);
+  background: var(--warning-tint);
+  color: var(--warning);
+  font: var(--t-meta);
+}
+
+.iq-hub-detail .finding .action {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-4);
+}
+
+.iq-hub-detail .finding .action > svg {
+  flex: none;
+  color: var(--fg-muted);
+}
+
+.iq-hub-limits {
+  margin: 0;
+  padding-left: var(--s-16);
+  font: var(--t-caption);
+}
+
+.iq-hub-limits li {
+  margin-bottom: var(--s-4);
+}
+
+.iq-hub-actions {
+  margin-top: var(--s-8);
+}
+
+/* A card holding a code block gives it whatever height is left. Capped at
+   300px, the config and the tool answer stopped a third of the way down and
+   the rest of the card was empty white — a scrollbar next to blank space. The
+   card scrolls nothing itself; the block inside it does. */
+.iq-hub-detail > .card:has(pre.source) {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.iq-hub-detail > .card:has(pre.source) > * {
+  flex: 0 0 auto;
+}
+
+.iq-hub-detail pre.source {
+  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* The one block that owns a card takes the room the card has left. Written as
+   a child selector so it out-specifies the rule above, which pins every other
+   child at its natural height. */
+.iq-hub-detail > .card > pre.source {
+  flex: 1 1 auto;
+  min-height: 140px;
+}
+
+/* -- the console -------------------------------------------------------- *
+ *
+ * Ask these IQs, laid out as a conversation: a transcript that grows, a box
+ * under it, and the five tool names still reachable by name underneath. The
+ * transcript is the part that stretches; the composer and the tool row are
+ * fixed, so the box never walks off the bottom of the card as answers arrive.
+ *
+ * The messages are Chat's — `.msg`, `.who`, `.bubble` — so this surface does
+ * not invent a third way of drawing an exchange. One question can have several
+ * answers, one per connected server; each is its own agent message named after
+ * the IQ that gave it, which is what makes it obvious where one server's answer
+ * ends and the next begins.
+ */
+
+/* The transcript is the part that stretches. Written long-hand because the
+   `:has(pre.source) > *` rule above pins every direct child at its natural
+   height, and that selector carries a `:has()` — this has to out-specify it. */
+.iq-hub-detail > .card.iq-hub-console > .iq-hub-chat {
+  flex: 1 1 auto;
+  min-height: 160px;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  padding: var(--s-12);
+  margin: var(--s-8) 0;
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-md);
+  background: var(--bg-1);
+}
+
+.iq-hub-chat-empty {
+  margin: auto 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s-8);
+  color: var(--fg-muted);
+}
+
+/* The openers are chips that click. A question is a sentence, so these are the
+   one place a chip is allowed to wrap — clipped to one line they would all end
+   in the same three words. */
+.iq-hub-chat-empty .chip {
+  white-space: normal;
+  text-align: left;
+  color: var(--fg-2);
+  cursor: pointer;
+}
+
+.iq-hub-chat-empty .chip:hover {
+  border-color: var(--stroke-strong);
+  background: var(--surface-hover);
+}
+
+/* An answer here is the call and then its output, so the bubble stacks where
+   Chat's holds one block of prose. */
+.iq-hub-chat .msg.from-agent .bubble {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s-4);
+}
+
+/* The call that answered it, spelled out. This is the claim the whole surface
+   is making — the answer came from a named read-only tool, not from a model —
+   so it is printed above every answer rather than implied once at the top. */
+.iq-hub-call {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: var(--s-4);
+  padding: var(--s-2) var(--s-8);
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-circular);
+  background: var(--chip-bg);
+  color: var(--fg-muted);
+}
+
+.iq-hub-call code {
+  font: var(--t-meta);
+  font-family: var(--font-mono);
+  color: var(--fg-2);
+}
+
+/* Answers inside the transcript are as tall as their text. The stretch-to-fit
+   rule above is for the one code block that owns a card; here there are many,
+   and a 140px floor each would space them out like paragraphs of air. */
+.iq-hub-chat pre.source {
+  flex: 0 0 auto;
+  min-height: 0;
+  margin: 0;
+  max-height: none;
+  align-self: stretch;
+}
+
+/* The five tools, still reachable by name. A thin row, not a form: the chat
+   box above is the front door, and this is the override and the inventory. */
+.iq-hub-direct {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--s-8);
+  margin-top: var(--s-12);
+  padding-top: var(--s-12);
+  border-top: 1px solid var(--stroke);
+  font: var(--t-caption);
+}
+
+.iq-hub-direct .field {
+  margin: 0;
+  flex: 1 1 160px;
+  min-width: 0;
+}
+
+.iq-hub-direct > .muted {
+  flex: 1 1 100%;
+  color: var(--fg-muted);
+}
+
+/* The scope filter. Three buttons that read as one control. */
+.iq-hub .segmented {
+  display: inline-flex;
+  gap: var(--s-2);
+}
+
+.iq-hub .segmented button {
+  border: none;
+  background: none;
+  padding: var(--s-4) var(--s-8);
+  border-radius: var(--radius-md);
+  color: var(--fg-muted);
+  font: var(--t-caption);
+  cursor: pointer;
+}
+
+.iq-hub .segmented button.active {
+  background: var(--surface-selected);
+  color: var(--fg);
+}
+
+@media (max-width: 900px) {
+  .iq-hub-detail {
+    min-height: 240px;
+  }
+}
+
+/* -- AI company organization ------------------------------------------ *
+ *
+ * Connectome IQ is an organization first: company → specialized IQ → AI
+ * role. It uses the app's existing surfaces, type, accent and state colours.
+ * The reference video contributes only the expandable hierarchy pattern.
+ */
+
+.iq-org {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-lg);
+  background: var(--bg-1);
+  overflow: hidden;
+}
+
+.iq-org-toolbar {
+  flex: 0 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-8);
+  padding: var(--s-12);
+  border-bottom: 1px solid var(--stroke);
+  background: var(--surface);
+}
+
+.iq-org-toolbar .iq-hub-search {
+  flex-basis: 230px;
+}
+
+.iq-org-toolbar > button.ghost {
+  white-space: nowrap;
+}
+
+.iq-org-scroll {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+}
+
+.iq-org-canvas {
+  --iq-org-line: color-mix(in srgb, var(--accent) 52%, var(--stroke-strong));
+  --iq-org-line-width: 4px;
+  min-width: 100%;
+  min-height: 100%;
+  padding: var(--s-24);
+}
+
+.iq-org-company {
+  position: relative;
+  width: min(390px, calc(100vw - 120px));
+  margin: 0 auto;
+  padding: var(--s-16);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-lg);
+  background: var(--card);
+  box-shadow: var(--shadow-2);
+}
+
+.iq-org-company::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -29px;
+  height: 28px;
+  border-left: var(--iq-org-line-width) solid var(--iq-org-line);
+}
+
+.iq-org-company-main {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-12);
+}
+
+.iq-org-company-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--stroke);
+  background: var(--accent-tint);
+  color: var(--accent);
+}
+
+.iq-org-company .iq-hub-card-title > .chip,
+.iq-org-specialist .iq-hub-card-title > .chip {
+  align-self: flex-start;
+  font: var(--t-meta);
+}
+
+.iq-org-company .iq-hub-card-title > strong {
+  font: var(--t-title);
+  font-weight: 600;
+}
+
+.iq-org-company-stats,
+.iq-org-role-facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--s-8);
+  margin-top: var(--s-12);
+  padding-top: var(--s-12);
+  border-top: 1px solid var(--stroke);
+}
+
+.iq-org-company-stats > span,
+.iq-org-role-facts > span {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  min-width: 0;
+}
+
+.iq-org-company-stats strong,
+.iq-org-role-facts strong {
+  font: var(--t-body);
+  font-weight: 600;
+}
+
+.iq-org-company-stats .muted,
+.iq-org-role-facts .muted {
+  font: var(--t-meta);
+}
+
+.iq-org-company-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-8);
+  margin-top: var(--s-12);
+  padding-top: var(--s-8);
+  border-top: 1px solid var(--stroke);
+  font: var(--t-caption);
+}
+
+/* Every function shares the pane rather than taking a fixed width. Five fixed
+   240px branches needed 1264px inside a 1022px pane, which pushed the fifth
+   function off screen while the root still counted it.
+
+   The row is a grid whose branches span two subgrid rows, so every function
+   card is as tall as the tallest one and the role lists all start on the same
+   line. Tracks cap at 260px and the row centres itself, so filtering down to
+   one or two functions does not stretch their cards across the pane. */
+.iq-org-branches {
+  position: relative;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(172px, 300px);
+  grid-template-rows: auto auto;
+  column-gap: var(--s-12);
+  row-gap: 0;
+  width: fit-content;
+  max-width: 100%;
+  margin: 28px auto 0;
+  padding-top: 28px;
+}
+
+.iq-org-branch {
+  position: relative;
+  display: grid;
+  grid-row: span 2;
+  grid-template-rows: subgrid;
+}
+
+/* The vertical stub into each function. */
+.iq-org-branch::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -28px;
+  height: 28px;
+  border-left: var(--iq-org-line-width) solid var(--iq-org-line);
+}
+
+/* The horizontal rail, drawn per branch so it follows whatever width the
+   branches settle at. It runs half the gap past each edge to bridge them, and
+   stops at the centre of the first and last so it never overshoots the row. */
+.iq-org-branch::after {
+  content: "";
+  position: absolute;
+  top: -28px;
+  left: calc(var(--s-12) / -2);
+  right: calc(var(--s-12) / -2);
+  border-top: var(--iq-org-line-width) solid var(--iq-org-line);
+}
+
+.iq-org-branch:first-child::after {
+  left: 50%;
+}
+
+.iq-org-branch:last-child::after {
+  right: 50%;
+}
+
+.iq-org-branch:only-child::after {
+  display: none;
+}
+
+.iq-org-specialist {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-md);
+  background: var(--card);
+  overflow: hidden;
+}
+
+.iq-org-specialist:hover {
+  border-color: var(--stroke-strong);
+}
+
+.iq-org-specialist.active {
+  border-color: var(--accent);
+  box-shadow: var(--shadow-2);
+}
+
+.iq-org-specialist.connected {
+  border-top: 3px solid var(--accent);
+}
+
+.iq-org-specialist-open {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--s-8);
+  width: 100%;
+  padding: var(--s-12);
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  font: var(--t-caption);
+}
+
+.iq-org-specialist-open:hover:not(:disabled) {
+  background: var(--surface-hover);
+}
+
+.iq-org-specialist-head {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-8);
+}
+
+.iq-org-specialist-summary {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+/* Stacked, because at branch width the two labels wrap when placed side by
+   side and each card ends up a different height. */
+.iq-org-specialist-actions {
+  display: grid;
+  gap: var(--s-4);
+  padding: var(--s-8);
+  border-top: 1px solid var(--stroke);
+  background: var(--bg-1);
+}
+
+.iq-org-expand {
+  justify-content: center;
+  padding: var(--s-2) var(--s-4);
+  font: var(--t-meta);
+  white-space: nowrap;
+}
+
+.iq-org-roles {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-8);
+  margin: var(--s-16) 0 0 var(--s-16);
+  padding-left: var(--s-16);
+  border-left: var(--iq-org-line-width) solid var(--iq-org-line);
+}
+
+.iq-org-role {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s-4);
+  width: 100%;
+  padding: var(--s-8);
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: inherit;
+  text-align: left;
+  font: var(--t-caption);
+}
+
+.iq-org-role::before {
+  content: "";
+  position: absolute;
+  left: calc(var(--s-16) * -1 - var(--iq-org-line-width));
+  top: 22px;
+  width: var(--s-16);
+  border-top: var(--iq-org-line-width) solid var(--iq-org-line);
+}
+
+.iq-org-role:hover:not(:disabled) {
+  background: var(--surface-hover);
+}
+
+.iq-org-role.active {
+  border-color: var(--accent);
+  background: var(--accent-tint);
+}
+
+.iq-org-role > strong {
+  font: var(--t-dense);
+  font-weight: 600;
+}
+
+.iq-org-role > .muted {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.iq-org-role-label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-4);
+  color: var(--fg-muted);
+  font: var(--t-meta);
+}
+
+.iq-org-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-8);
+  min-height: 220px;
+}
+
+/* The selected function is the second half of the workbench. Unlike the old
+   horizontal card strip, this column reads in one direction and can hold the
+   focused AI role, findings, MCP setup and console without narrowing them. */
+.iq-hub-detail.iq-org-detail {
+  position: relative;
+  display: block;
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-lg);
+  background: var(--bg-1);
+  box-shadow: none;
+  overflow: auto;
+}
+
+.iq-org-detail-close {
+  position: sticky;
+  z-index: 4;
+  top: var(--s-8);
+  float: right;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  margin: var(--s-8) var(--s-8) calc(var(--s-8) * -1) 0;
+  padding: 0;
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-circular);
+  background: var(--surface);
+  box-shadow: var(--shadow-1);
+}
+
+.iq-hub-detail.iq-org-detail.empty {
+  display: flex;
+  min-height: 0;
+  padding: var(--s-20);
+}
+
+.iq-org-detail-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: var(--s-8);
+  max-width: 360px;
+  margin: auto;
+}
+
+.iq-org-detail > .card {
+  width: auto;
+  min-width: 0;
+  margin: var(--s-12);
+  overflow: visible;
+}
+
+.iq-org-detail > .card.iq-hub-console {
+  min-height: 560px;
+  overflow: hidden;
+}
+
+.iq-org-role-detail {
+  border-color: var(--accent);
+}
+
+.iq-org-role-detail > .chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-4);
+  margin-bottom: var(--s-8);
+}
+
+@media (max-width: 1050px) {
+  .iq-hub-body.detail-open {
+    grid-template-columns: minmax(0, 1fr);
+    overflow: auto;
+  }
+
+  .iq-org {
+    min-height: 560px;
+  }
+
+  .iq-hub-detail.iq-org-detail {
+    min-height: 420px;
+    overflow: visible;
+  }
+}

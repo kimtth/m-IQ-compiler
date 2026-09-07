@@ -1,0 +1,119 @@
+/* --- canvas tab strip ---------------------------------------------------- */
+
+/* The one tab concept in the product: artifacts and secondary surfaces share
+   this strip, so there is never an application-level tab bar as well. */
+.canvas-tabs {
+  display: flex;
+  align-items: stretch;
+  gap: var(--s-2);
+  padding: var(--s-4) var(--s-8) 0;
+  border-bottom: 1px solid var(--stroke);
+  background: var(--surface-alt);
+  overflow-x: auto;
+  min-width: 0;
+  /* A flex child shrinks by default, and the tab strip is a flex child of the
+     canvas column. A tall surface — Audit's table is the one that exposed it —
+     squeezed the strip down to a few pixels and put every tab out of reach.
+     The strip is chrome: it keeps its height and the surface below it scrolls. */
+  flex: 0 0 auto;
+}
+
+.canvas-tab {
+  display: flex;
+  align-items: center;
+  gap: var(--s-8);
+  background: none;
+  border: 1px solid transparent;
+  border-bottom: none;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  padding: 6px 10px;
+  color: var(--fg-muted);
+  white-space: nowrap;
+  max-width: 220px;
+  transition:
+    background var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease);
+}
+
+.canvas-tab:hover {
+  background: var(--surface-hover);
+  color: var(--fg);
+}
+
+.canvas-tab .name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.canvas-tab.active {
+  background: var(--bg-base);
+  border-color: var(--stroke);
+  color: var(--fg);
+  font-weight: 600;
+  margin-bottom: -1px;
+  padding-bottom: 7px;
+}
+
+.canvas-tab .close {
+  border: none;
+  background: none;
+  padding: 2px;
+  border-radius: var(--radius-sm);
+  color: var(--fg-muted);
+  line-height: 0;
+}
+
+.canvas-tab .close:hover {
+  background: var(--surface-pressed);
+  color: var(--fg);
+}
+
+/* Pushes "Close all" to the right when the tabs do not fill the strip. */
+.canvas-tabs > .spacer {
+  flex: 1 1 auto;
+  min-width: var(--s-8);
+}
+
+/* The strip scrolls horizontally, so a trailing button would scroll out of
+   reach exactly when there are enough tabs to want it. Sticky keeps it pinned
+   to the right edge of the visible strip at any scroll offset. */
+.canvas-tabs > .close-all {
+  position: sticky;
+  right: 0;
+  flex: 0 0 auto;
+  align-self: center;
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  margin-bottom: var(--s-4);
+  padding: 3px var(--s-8);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  background: var(--surface-alt);
+  box-shadow: -8px 0 8px -6px var(--surface-alt);
+  color: var(--fg-muted);
+  font: var(--t-caption);
+  white-space: nowrap;
+  transition:
+    background var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease),
+    border-color var(--dur-fast) var(--ease);
+}
+
+.canvas-tabs > .close-all:hover {
+  background: var(--surface-hover);
+  border-color: var(--stroke);
+  color: var(--fg);
+}
+
+.canvas-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-12);
+  height: 100%;
+  color: var(--fg-muted);
+  text-align: center;
+  padding: var(--s-32);
+}

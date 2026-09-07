@@ -1,0 +1,326 @@
+/* ==========================================================================
+ * IQ Workflow and My IQ.
+ *
+ * Both are canvas tabs, so they own only the inside of the canvas pane: they
+ * fill it, scroll internally, and never push the pane wider. Colour here is
+ * categorical — node family, fibre direction — which is the one place hue
+ * carries meaning, exactly like the knowledge-graph tokens.
+ * ====================================================================== */
+
+.chip {
+  font: var(--t-caption);
+  padding: 1px var(--s-8);
+  border-radius: var(--radius-circular);
+  border: 1px solid var(--stroke);
+  background: var(--surface-alt);
+  color: var(--fg-muted);
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-4);
+}
+
+.chip.beta {
+  border-color: color-mix(in srgb, var(--graph-tag) 45%, var(--stroke));
+  background: color-mix(in srgb, var(--graph-tag) 10%, var(--background));
+  color: color-mix(in srgb, var(--graph-tag) 70%, var(--fg));
+  letter-spacing: 0.02em;
+}
+
+.chip.beta.small {
+  font-size: 9px;
+  padding: 0 5px;
+  margin-left: var(--s-4);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  font: var(--t-caption);
+  color: var(--fg-muted);
+  min-width: 0;
+}
+
+.field > input {
+  width: 100%;
+}
+
+.field.inline {
+  flex-direction: row;
+  align-items: center;
+  gap: var(--s-8);
+}
+
+.field.slider span {
+  display: flex;
+  justify-content: space-between;
+}
+
+.field.slider em {
+  font: var(--t-caption);
+  font-family: var(--font-mono);
+  font-style: normal;
+  color: var(--fg-2);
+}
+
+.field input[type="range"] {
+  width: 100%;
+  accent-color: var(--primary);
+}
+
+/* -- IQ Workflow --------------------------------------------------------- */
+
+.flow,
+.connectome {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  background: var(--bg-base);
+}
+
+/* The node details dialog is positioned against this box, so it covers the
+   whole surface rather than one column of it. */
+.connectome {
+  position: relative;
+}
+
+.flow-head {
+  display: flex;
+  align-items: center;
+  gap: var(--s-8);
+  padding: var(--s-8) var(--s-12);
+  border-bottom: 1px solid var(--stroke);
+  background: var(--bg-1);
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+}
+
+.flow-head .spacer {
+  flex: 1 1 auto;
+}
+
+.flow-title {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-8);
+  font: var(--t-subtitle);
+  color: var(--fg);
+}
+
+.flow-hash {
+  font: var(--t-caption);
+  font-family: var(--font-mono);
+  color: var(--fg-muted);
+}
+
+/* The product line, beside the surface name. Reads as a subtitle rather than
+   as a control.
+
+   `flex: 0 1 auto` with `min-width: 0` so it may wrap inside itself when the
+   header row is full — `.flow-head` is `flex-wrap`, which moves an item to the
+   next row whole, and a header that is one long unbreakable run pushes the
+   controls off the end instead. */
+.flow-tagline {
+  flex: 0 1 auto;
+  min-width: 0;
+  font: var(--t-caption);
+  color: var(--fg-muted);
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.flow-state {
+  font: var(--t-caption);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 1px var(--s-8);
+  border-radius: var(--radius-circular);
+  border: 1px solid var(--stroke);
+  color: var(--fg-muted);
+}
+
+.flow-state.complete {
+  border-color: var(--success);
+  background: var(--success-tint);
+  color: var(--success);
+}
+
+.flow-state.invalid {
+  border-color: var(--danger);
+  background: var(--danger-tint);
+  color: var(--danger);
+}
+
+.flow-body {
+  flex: 1 1 auto;
+  display: grid;
+  /* Overridden inline by the split hook; this is the pre-measurement fallback. */
+  grid-template-columns: 276px 5px minmax(0, 1fr) 5px 300px;
+  min-height: 0;
+  min-width: 0;
+}
+
+.flow-palette,
+.flow-inspector {
+  min-width: 0;
+  overflow: auto;
+  padding: var(--s-12);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-8);
+  background: var(--bg-1);
+}
+
+/* A scrolling flex column still shrinks its items by default, so once either
+ * column is taller than its pane the sections compress and their contents
+ * overlap. Nothing in either column may shrink. */
+.flow-palette > *,
+.flow-inspector > * {
+  flex: 0 0 auto;
+}
+
+.flow-palette {
+  border-right: 1px solid var(--stroke);
+  gap: var(--s-4);
+}
+
+.flow-palette h4 {
+  margin: var(--s-12) 0 var(--s-4);
+  font: var(--t-caption);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--fg-muted);
+}
+
+.flow-palette section:first-of-type h4 {
+  margin-top: var(--s-4);
+}
+
+.flow-inspector {
+  border-left: 1px solid var(--stroke);
+}
+
+/* A palette entry is a stacked card, not a single row: the label and one line
+ * of description each get their own line, so a narrow column reads as a list
+ * instead of wrapping every word onto its own line. The shape mark occupies a
+ * fixed first column spanning both rows, so the text block stays aligned no
+ * matter how long the description runs. */
+.palette-item {
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr);
+  gap: 2px var(--s-8);
+  width: 100%;
+  text-align: left;
+  padding: var(--s-8);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  background: none;
+  color: var(--fg);
+  font: var(--t-caption);
+  cursor: grab;
+  transition:
+    background var(--dur-fast) var(--ease),
+    border-color var(--dur-fast) var(--ease);
+}
+
+.palette-item > .shape-mark {
+  grid-column: 1;
+  grid-row: 1 / -1;
+  align-self: center;
+}
+
+/* Auto-placement puts the text into whichever cell is free, which after a
+   row-spanning mark is the 26px mark column — that is what was truncating
+   every description to "Cha…". The text block is pinned to column 2. */
+.palette-item > strong,
+.palette-item > .muted {
+  grid-column: 2;
+}
+
+.palette-item.template {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.palette-item.template > strong,
+.palette-item.template > .muted {
+  grid-column: 1;
+}
+
+.palette-item strong {
+  min-width: 0;
+  font-weight: 600;
+  color: var(--fg);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.palette-item > .muted {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.35;
+  color: var(--fg-muted);
+}
+
+.palette-item:hover {
+  background: var(--surface-hover);
+  border-color: var(--stroke);
+}
+
+.palette-item.template {
+  cursor: pointer;
+}
+
+/* The palette stripe names the family: the process itself, the things it
+   handles, and remarks about the drawing. The modifier is prefixed because the
+   bare family names collide: `.flow` is the surface itself, and it carries
+   `height: 100%`, which stretched every process entry over the sections below
+   it and swallowed their clicks. */
+.palette-item {
+  border-left-width: 3px;
+}
+
+.palette-item.family-flow { border-left-color: var(--family-flow); }
+.palette-item.family-context { border-left-color: var(--family-context); }
+.palette-item.family-annotation { border-left-color: var(--family-annotation); }
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-circular);
+  flex: 0 0 auto;
+  background: var(--fg-muted);
+}
+
+.dot.flow { background: var(--family-flow); }
+.dot.context { background: var(--family-context); }
+.dot.annotation { background: var(--family-annotation); }
+
+.inspector-title {
+  display: flex;
+  align-items: center;
+  gap: var(--s-8);
+}
+
+/* The outline is the keyboard path through the diagram: one row per node, in
+   reading order, each opening its inspector. */
+.flow-outline-list {
+  margin: 0;
+  padding-left: var(--s-16);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+}
+
+.flow-outline-list button {
+  display: flex;
+  align-items: center;
+  gap: var(--s-8);
+  text-align: left;
+}

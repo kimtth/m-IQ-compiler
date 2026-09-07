@@ -1,0 +1,52 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+node_modules/
+dist/
+.package/
+*.tsbuildinfo
+.env
+.env.local
+out/
+coverage/
+err.log
+out.log
+electron.log
+
+# Reference projects analysed for the design; each is its own checkout.
+/ref-app/
+
+# tsc type-check output for the bundled preload
+/apps/preload/types/
+/tests/.tmp
+
+# Packaged app. Rebuilt by pnpm package; nothing under it is an input.
+/release/
+
+# Cargo build output. The crate is built by pnpm prepare:audio and copied to
+# <IQ_HOME>/tools/bin; nothing under target/ is an input to anything.
+/native/iq-audio/target/
+
+# The research sidecar's virtual environment. Built by pnpm prepare:research
+# into <IQ_HOME>/tools/research-py; this one is only a developer convenience.
+/native/iq-research/.venv/
+/native/iq-research/*.egg-info/
+__pycache__/
+/.agent
+
+AGENTS.md
+CLAUDE.md
+code-review-report.md
+.agent/prompts/code-review-generic.prompts.md
+/.agents
+/video
+/sample-data/demo-automation/production-recordings
+/sample-data/demo-automation/recordings
+UNCONFIRMED_ASSUMPTIONS.md
