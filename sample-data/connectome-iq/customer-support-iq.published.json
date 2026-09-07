@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "publishedAt": "2026-01-22T16:40:00.000Z",
+  "name": "Customer support IQ",
+  "shared": true,
+  "sampleDataOnly": true,
+  "cells": [
+    {
+      "id": "cell_support_group_requests",
+      "name": "Group similar customer requests",
+      "version": 8,
+      "origin": "editor",
+      "faces": ["Cluster the week's requests so the same answer is written once"],
+      "reach": ["Support inbox"],
+      "runs": 402,
+      "completionRate": 0.94,
+      "approver": "marco"
+    },
+    {
+      "id": "cell_support_common_answer",
+      "name": "Prepare a clear answer for a common question",
+      "version": 5,
+      "origin": "editor",
+      "faces": [
+        "Draft the answer",
+        "Cite the note it came from",
+        "Hold it for review"
+      ],
+      "reach": ["Support inbox", "Knowledge notes"],
+      "runs": 288,
+      "completionRate": 0.9,
+      "approver": "marco"
+    },
+    {
+      "id": "cell_support_escalate",
+      "name": "Escalate what support cannot close",
+      "version": 2,
+      "origin": "editor",
+      "faces": ["Hand the request on with what was already tried attached"],
+      "reach": ["Support inbox"],
+      "runs": 61,
+      "completionRate": 0.97,
+      "approver": "priya"
+    }
+  ],
+  "connectome": {
+    "hash": "a2d90b6e",
+    "nodeCount": 3,
+    "edgeCount": 7,
+    "windowDays": 30,
+    "findings": [
+      {
+        "kind": "redundancy",
+        "title": "Grouping and answering are effectively one step",
+        "detail": "They ran within a minute of each other in 96% of the window, and never apart by more than an hour.",
+        "action": "Treat them as one procedure when either is changed."
+      },
+      {
+        "kind": "permission_concentration",
+        "title": "Escalation is the only cell a second person approves",
+        "detail": "Everything else is approved by its author, so escalation is the only place a second reader sees the work.",
+        "action": "Decide whether that is intended before adding a fourth cell."
+      }
+    ],
+    "limits": [
+      "Run history covers 30 days.",
+      "No message content is read. Coupling comes from what the cells declare and when they ran."
+    ],
+    "generatedAt": "2026-01-22T16:39:02.000Z"
+  },
+  "memories": [
+    {
+      "id": "mem_support_cite",
+      "subject": "support",
+      "fact": "An answer cites the note it came from or it does not go out.",
+      "memoryType": "convention",
+      "status": "approved"
+    },
+    {
+      "id": "mem_support_escalation",
+      "subject": "support",
+      "fact": "Escalations carry what was already tried.",
+      "memoryType": "convention",
+      "status": "approved"
+    }
+  ],
+  "notes": [
+    { "path": "support/common-answers.md", "title": "Answers we send often" },
+    { "path": "support/escalation.md", "title": "When to escalate" }
+  ]
+}

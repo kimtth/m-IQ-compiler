@@ -1,0 +1,225 @@
+{
+  "$comment": "Canonical demo input/output set. One entry per feature shown in the product video. Every entry starts from an initialised surface - a new conversation, an empty pane - so nothing depends on leftover state or on a live tenant. Fabricated throughout.",
+  "version": 3,
+  "world": "Plain project, customer, operations and quality-review work. The same world as sample-data/demo-project and sample-data/iq-cells.",
+  "entries": [
+    {
+      "id": "conversation-workiq",
+      "mode": "Chat",
+      "surface": "Conversation",
+      "feature": "Work IQ · Microsoft 365",
+      "openingState": "New conversation. No history, no attachments.",
+      "input": {
+        "label": "First message",
+        "text": "What meetings do I have tomorrow, and who is attending?"
+      },
+      "transport": {
+        "server": "Work IQ",
+        "protocol": "MCP · local stdio server",
+        "account": "The server holds its own Microsoft 365 account. IQ Compiler never hands it a token.",
+        "risk": "read — no approval card, because nothing leaves the tenant"
+      },
+      "tools": [
+        {"name": "workiq-search_paths", "why": "find the calendar path"},
+        {"name": "m365_list_calendar", "why": "read tomorrow's events"},
+        {"name": "workiq-fetch", "why": "expand each event's attendees"}
+      ],
+      "output": {
+        "label": "Answer",
+        "title": "Tuesday 2 September — 4 meetings",
+        "rows": [
+          ["09:30 – 10:00", "Portal release check", "3 attendees"],
+          ["11:00 – 12:00", "Customer review · Bright Path", "5 attendees"],
+          ["14:00 – 14:30", "Quality review standup", "4 attendees"],
+          ["16:00 – 17:00", "Change board · CHANGE-2214", "6 attendees"]
+        ],
+        "note": "One free block: 12:00 – 14:00.",
+        "marking": "The result is marked untrusted. Content that came from outside is data, not an instruction."
+      },
+      "narrationClaim": "Reading the calendar asks nothing. Sending mail would ask every time."
+    },
+
+    {
+      "id": "research",
+      "mode": "Chat",
+      "surface": "Research",
+      "feature": "Multi-round research with citations",
+      "openingState": "Empty research pane. One topic field.",
+      "input": {
+        "label": "Topic",
+        "text": "sovereign cloud"
+      },
+      "output": {
+        "label": "Report",
+        "title": "Research: sovereign cloud · 12.8 KB Markdown",
+        "section": "Executive Summary",
+        "body": "A sovereign cloud is a cloud environment designed to satisfy a jurisdiction's digital-sovereignty requirements: data governance, residency, access, encryption keys, compliance and operational authority.[3][4]",
+        "sources": [
+          "7 · Sovereign Cloud · cloud.google.com",
+          "10 · Azure Data Residency · azure.microsoft.com",
+          "15 · Oracle Sovereign Cloud · oracle.com"
+        ],
+        "coverage": "Every question in the plan was answered with at least one citation.",
+        "path": "project/research/sovereign-cloud.md"
+      },
+      "narrationClaim": "A topic goes in. A cited report comes out."
+    },
+
+    {
+      "id": "council",
+      "mode": "Chat",
+      "surface": "Council",
+      "feature": "Multi-member decision with recorded dissent",
+      "openingState": "Empty council pane. Three members loaded, no question yet.",
+      "input": {
+        "label": "Question",
+        "text": "The customer portal release is failing 3% of its automated checks. Do we ship on the promised date, or hold two weeks?",
+        "members": ["Delivery", "Customer trust", "Quality review"]
+      },
+      "output": {
+        "label": "Verdict",
+        "title": "Council verdict · Confidence: medium",
+        "recommendation": "Do not ship on the promised date with the checks failing. Run a 48-hour diagnostic gate, and hold the release the moment the failure reproduces.",
+        "dissent": [
+          ["Customer trust", "Send the two-week notice today. A moved date is recoverable; a broken portal in front of a customer is not."],
+          ["Delivery", "Send no notice yet. Replanning costs become real the moment they are announced."]
+        ],
+        "counts": "7 decision criteria · 5 open questions still recorded",
+        "path": "project/council/verdict.md"
+      },
+      "narrationClaim": "A decision goes in. A verdict with its dissent comes out."
+    },
+
+    {
+      "id": "data-agent",
+      "mode": "Chat",
+      "surface": "Fabric Data Agent",
+      "feature": "Ask the published Fabric Data Agent in plain language",
+      "openingState": "New conversation. The published Fabric Data Agent endpoint is already connected.",
+      "input": {
+        "label": "Question",
+        "text": "Which customers had more than two open issues last quarter?"
+      },
+      "transport": {
+        "server": "Microsoft Fabric",
+        "protocol": "Published Fabric Data Agent endpoint",
+        "account": "Azure identity. The same sign-in you use, nothing stored.",
+        "risk": "read — the agent answers over the semantic model, it does not write to it"
+      },
+      "tools": [
+        {"name": "fabric_ask_data_agent", "why": "put the question to the published agent"}
+      ],
+      "output": {
+        "label": "Answer",
+        "title": "4 customers",
+        "rows": [
+          ["Bright Path", "5 open"],
+          ["Northwind Retail", "4 open"],
+          ["Lakeside Health", "3 open"],
+          ["Contoso Logistics", "3 open"]
+        ],
+        "query": "EVALUATE\n  FILTER(\n    SUMMARIZECOLUMNS(\n      Customer[Name],\n      \"Open\", CALCULATE(COUNTROWS(Issue), Issue[Status] = \"Open\")\n    ),\n    [Open] > 2\n  )",
+        "note": "The generated query stays on screen. You can read what was asked of the model, not only what came back."
+      },
+      "narrationClaim": "The answer comes back from Fabric, and the query that produced it stays on screen."
+    },
+
+    {
+      "id": "office",
+      "mode": "Co-create",
+      "surface": "Office",
+      "feature": "Build a document and watch it being written",
+      "openingState": "Empty Office pane. No file open.",
+      "input": {
+        "label": "Instruction",
+        "text": "Turn the customer portal review notes into a six-slide overview deck. Give every slide a title and a body."
+      },
+      "output": {
+        "label": "Deck",
+        "title": "portal-review-overview.pptx · 6 slides",
+        "rows": [
+          ["1", "Where the portal stands"],
+          ["2", "What the checks are telling us"],
+          ["3", "CHANGE-2214 in one page"],
+          ["4", "What the customer has been told"],
+          ["5", "The two options"],
+          ["6", "What we are asking for"]
+        ],
+        "note": "Content preview sits in the same workspace. You can read slide 3 while slide 5 is still being written."
+      },
+      "narrationClaim": "The file is inspectable while it is still being written."
+    },
+
+    {
+      "id": "image-creation",
+      "mode": "Co-create",
+      "surface": "Image Creation",
+      "feature": "Generate an image, then edit a painted region",
+      "openingState": "Empty canvas. One prompt field.",
+      "input": {
+        "label": "Prompt",
+        "text": "A flat vector infographic for a quarterly business review. A 2x2 grid of four panels labelled Revenue, Cost, Headcount, Risk. Deep navy background, white text, a single orange accent colour."
+      },
+      "output": {
+        "label": "Image + provenance",
+        "title": "qbr-infographic.png · 1024 × 1024",
+        "provenance": "Model, size, endpoint and correlation id are written beside the file.",
+        "edit": {
+          "label": "Then edit it",
+          "text": "Paint the region. Describe the change.",
+          "appQuote": "The area is a hint, not a boundary — the model often adjusts pixels just outside it so the edit blends in.",
+          "note": "The application says so on screen. No hidden behaviour."
+        }
+      },
+      "narrationClaim": "This is visible work: the prompt, the file and the edit are all on screen."
+    },
+
+    {
+      "id": "skill-recording",
+      "mode": "Co-create",
+      "surface": "Skill Recording",
+      "feature": "Turn a repeated task into a named skill",
+      "openingState": "Nothing recorded. Consent checkbox unticked.",
+      "input": {
+        "label": "What you do",
+        "text": "Record yourself doing the task once. Analysis does not start until you tick the consent box."
+      },
+      "output": {
+        "label": "Skill proposal",
+        "title": "Weekly portal review pack · proposed",
+        "rows": [
+          ["Record", "18 steps captured on the device"],
+          ["Reconstruction", "You edit what the app thinks happened"],
+          ["Approve", "Nothing is built until you say yes"],
+          ["Build", "A named skill, with its allowed tools written separately"]
+        ],
+        "note": "The skill body and its allowed-tools list are separate files. A skill cannot widen its own permission."
+      },
+      "narrationClaim": "Record, correct, approve, build."
+    },
+
+    {
+      "id": "meeting-recording",
+      "mode": "Co-create",
+      "surface": "Meeting Recordings",
+      "feature": "A recording becomes decisions and action items you approve",
+      "openingState": "Empty recording list.",
+      "input": {
+        "label": "What goes in",
+        "text": "A 32-minute meeting recording. Transcription runs on the device."
+      },
+      "output": {
+        "label": "Notes awaiting review",
+        "title": "Change board · CHANGE-2214 · 32:14",
+        "rows": [
+          ["Decision", "Hold the portal release until the check failure reproduces", "11:42"],
+          ["Decision", "Customer update goes out Thursday, not today", "19:05"],
+          ["Action", "Rebuild the review pack with dated evidence", "24:30"],
+          ["Action", "Book the 48-hour diagnostic gate", "28:12"]
+        ],
+        "note": "Every line keeps the timestamp it came from. Nothing is filed until a person approves it."
+      },
+      "narrationClaim": "Each line keeps the second of the recording it came from."
+    }
+  ]
+}

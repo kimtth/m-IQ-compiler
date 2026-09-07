@@ -1,0 +1,230 @@
+/* ---------------------------------------------------------------------------
+   The rendered document itself. Shared by anything that renders a whole
+   markdown file, which today is IQ Industry.
+--------------------------------------------------------------------------- */
+.md {
+  max-width: 78ch;
+  padding-right: var(--s-16);
+}
+
+.md h1,
+.md h2,
+.md h3 {
+  /* `scroll-margin-top` is what makes an outline jump land the heading below
+     the top edge rather than flush against it, where it reads as cut off. */
+  scroll-margin-top: var(--s-8);
+  line-height: 1.25;
+}
+
+.md h1 {
+  font-size: 22px;
+  margin: 0 0 var(--s-8);
+}
+
+.md h2 {
+  font-size: 17px;
+  margin: var(--s-24) 0 var(--s-8);
+  padding-bottom: var(--s-4);
+  border-bottom: 1px solid var(--border);
+}
+
+.md h3 {
+  font-size: 14px;
+  margin: var(--s-16) 0 var(--s-4);
+}
+
+.md p {
+  line-height: 1.65;
+  margin: 0 0 var(--s-12);
+}
+
+.md ul,
+.md ol {
+  margin: 0 0 var(--s-12);
+  padding-left: var(--s-20);
+  line-height: 1.6;
+}
+
+.md li {
+  margin-bottom: var(--s-4);
+}
+
+.md li.nested {
+  margin-left: var(--s-16);
+  list-style-type: circle;
+}
+
+.md hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: var(--s-24) 0;
+}
+
+.md code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  background: var(--surface-active);
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+
+.md-code {
+  position: relative;
+  background: var(--surface-active);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--s-12);
+  margin: 0 0 var(--s-12);
+  overflow: auto;
+}
+
+.md-code code {
+  background: none;
+  padding: 0;
+  white-space: pre;
+}
+
+/* Shown on a code block that is NOT rendered as a figure. Mermaid flowcharts
+   are drawn (see .md-mermaid); this labels everything else, and it is also what
+   a mermaid block falls back to when it uses a construct the renderer does not
+   draw — a partial diagram would assert a structure nobody wrote. */
+.md-code-language {
+  position: absolute;
+  top: 4px;
+  right: 8px;
+  font: var(--t-meta);
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+/* A rendered Mermaid flowchart. Built as React SVG elements rather than by a
+   library, so there is no markup string to sanitise. */
+.md-mermaid {
+  margin: 0 0 var(--s-16);
+  padding: var(--s-16);
+  background: var(--surface-sunken);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow-x: auto;
+}
+
+.md-mermaid svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.md-mermaid-node {
+  fill: var(--card);
+  stroke: var(--border-strong, var(--border));
+  stroke-width: 1;
+}
+
+.md-mermaid-text {
+  fill: var(--fg);
+  font: var(--t-caption);
+  text-anchor: middle;
+}
+
+.md-mermaid-link {
+  stroke: var(--fg-muted);
+  stroke-width: 1.4;
+  fill: none;
+}
+
+.md-mermaid-link.dashed {
+  stroke-dasharray: 4 3;
+}
+
+.md-mermaid-head {
+  fill: var(--fg-muted);
+}
+
+/* The label rides on the line, so it needs the line hidden behind it. */
+.md-mermaid-label-plate {
+  fill: var(--surface-sunken);
+}
+
+.md-mermaid-label {
+  fill: var(--fg-muted);
+  font: var(--t-meta);
+  text-anchor: middle;
+}
+
+.md-callout {
+  display: block;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius);
+  background: var(--card);
+  padding: var(--s-12);
+  margin: 0 0 var(--s-16);
+}
+
+.md-callout > strong {
+  display: block;
+  font: var(--t-meta);
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: var(--s-4);
+}
+
+.md-callout p:last-child,
+.md blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+.md blockquote {
+  margin: 0 0 var(--s-12);
+  padding-left: var(--s-12);
+  border-left: 2px solid var(--border);
+  color: var(--fg-muted);
+}
+
+.md-table {
+  overflow-x: auto;
+  margin: 0 0 var(--s-16);
+}
+
+.md-table table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 12px;
+}
+
+.md-table th,
+.md-table td {
+  border: 1px solid var(--border);
+  padding: var(--s-4) var(--s-8);
+  text-align: left;
+  vertical-align: top;
+  line-height: 1.5;
+}
+
+.md-table th {
+  background: var(--surface-active);
+  font-weight: 600;
+}
+
+/* A wikilink that resolves is a control; one that does not is a statement.
+   The primers were written inside a much larger vault, so most targets are
+   outside the bundled set and a link that goes nowhere would be the norm. */
+.wikilink {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+.wikilink.missing {
+  color: var(--fg-muted);
+  text-decoration: underline dotted;
+  cursor: default;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 2px;
+}

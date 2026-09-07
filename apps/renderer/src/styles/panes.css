@@ -1,0 +1,220 @@
+/* --- workbench and panes ------------------------------------------------- *
+ * The workbench is the SOLE owner of layout: a flex row of panes. Every pane
+ * is a min-width:0 flex child that scrolls internally, so a wide table, a long
+ * path or a code block scrolls INSIDE its pane instead of widening it. Side
+ * panes take a fixed width (the shell sets --pane-width inline, or an inline
+ * width, either overrides the default); the canvas takes the remaining space.
+ * Expanding or resizing one pane therefore never distorts the others. */
+.workbench {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+.pane {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--surface);
+  position: relative;
+}
+
+/* Canvas is the flexible pane and the largest; it absorbs resize deltas. */
+.pane.canvas {
+  flex: 1 1 0;
+  min-width: 320px;
+  background: var(--bg-base);
+}
+
+/* Side panes are fixed-width flex children that never fall below their min. */
+.pane.chat {
+  flex: 0 0 auto;
+  width: var(--pane-width, 380px);
+  min-width: 300px;
+  background: var(--surface-alt);
+}
+
+.pane.navigator {
+  flex: 0 0 auto;
+  width: var(--pane-width, 264px);
+  min-width: 200px;
+  background: var(--surface-alt);
+}
+
+.pane.inspector {
+  flex: 0 0 auto;
+  width: var(--pane-width, 320px);
+  min-width: 260px;
+  background: var(--surface-alt);
+}
+
+/* A pane the shell has hidden takes no space at all. */
+.pane.hidden {
+  display: none;
+}
+
+/* When chat is the only working pane (Chat mode), let it fill the workbench. */
+.workbench > .pane.chat:only-child {
+  flex: 1 1 0;
+  width: auto;
+}
+
+/* --- pane divider -------------------------------------------------------- *
+ * Rendered by the shell between two adjacent panes (role="separator").
+ *
+ * One pixel wide, because that is a border and anything thicker reads as a
+ * band of empty colour between the panes. The drag target is not one pixel:
+ * `::before` reaches four pixels either side, so the thing you grab is nine
+ * pixels wide while the thing you see is a line. */
+.pane-divider {
+  flex: 0 0 1px;
+  align-self: stretch;
+  position: relative;
+  cursor: col-resize;
+  background: var(--stroke);
+  border: none;
+  padding: 0;
+  transition: background var(--dur-fast) var(--ease);
+  touch-action: none;
+}
+
+.pane-divider::before {
+  content: "";
+  position: absolute;
+  inset: 0 -4px; /* widen the hit area well beyond the visible line */
+}
+
+.pane-divider:hover,
+.pane-divider:active {
+  background: var(--primary);
+}
+
+.pane-divider:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 0;
+  background: var(--primary);
+}
+
+/* The same handle one level down, between the columns of a canvas surface. */
+.split-divider {
+  align-self: stretch;
+  position: relative;
+  cursor: col-resize;
+  background: var(--stroke);
+  transition: background var(--dur-fast) var(--ease);
+  touch-action: none;
+  z-index: 2;
+}
+
+.split-divider::before {
+  content: "";
+  position: absolute;
+  inset: 0 -4px;
+}
+
+.split-divider:hover,
+.split-divider:active,
+.split-divider:focus-visible {
+  background: var(--primary);
+}
+
+.split-divider:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 0;
+}
+
+/* --- pane chrome --------------------------------------------------------- */
+
+/* The header is part of its pane, not a strip laid over it: transparent, so it
+   takes the pane's own background and the only thing dividing them is the
+   hairline. Painting it a different grey gave every pane a banded top, and
+   with four panes open that is four bands across the window. */
+.pane-header {
+  display: flex;
+  align-items: center;
+  gap: var(--s-8);
+  padding: var(--s-8) var(--s-12);
+  border-bottom: 1px solid var(--stroke);
+  min-height: 44px;
+  background: transparent;
+  /* Chrome, like the tab strip: it keeps its height and the body scrolls. */
+  flex: 0 0 auto;
+}
+
+.pane-title {
+  font: var(--t-body);
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pane-header .spacer,
+.pane-actions .spacer {
+  flex: 1;
+}
+
+/* A cluster of actions on the right of a pane header. */
+.pane-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  margin-left: auto;
+}
+
+/* Every surface's content sits inside this, so it is the one place the gutter
+   between a card and the pane edge is decided. 16px read as cramped: a bordered
+   card almost touching a bordered pane gives two lines a few pixels apart, and
+   the eye cannot tell which edge belongs to what. */
+.pane-body {
+  flex: 1;
+  overflow: auto;
+  min-width: 0;
+  min-height: 0;
+  padding: var(--s-20);
+}
+
+.pane-body.flush {
+  padding: 0;
+}
+
+/* A canvas surface is expected to supply its own `.pane-header` + `.pane-body`,
+   and `.pane.canvas` has no padding of its own — the body is what owns the
+   gutter. Several surfaces are a bare `.stack` or `.card` instead, and those
+   were mounted flush against the pane border, with card outlines a pixel or two
+   from the pane outline. Give the bare roots the same gutter here rather than
+   making every surface remember to. Surfaces that are meant to be full-bleed
+   (`.flow`, `.connectome`, the file viewer) carry their own class and are
+   untouched. */
+.pane.canvas > .stack {
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+  overflow: auto;
+  padding: var(--s-20);
+}
+
+.pane.canvas > .card {
+  margin: var(--s-20);
+  min-height: 0;
+  overflow: auto;
+}
+
+/* Control Center wraps each destination in a filter row plus the panel. It is
+   a flex child of the canvas column, so without these it sizes to its content
+   — an Audit table of a few hundred rows — and squeezes the tab strip above it
+   down to a sliver. It is a column that fills the pane and scrolls inside. */
+.control-destination {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+}

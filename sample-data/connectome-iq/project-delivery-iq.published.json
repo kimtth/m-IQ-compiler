@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "publishedAt": "2026-01-18T09:12:00.000Z",
+  "name": "Project delivery IQ",
+  "shared": true,
+  "sampleDataOnly": true,
+  "cells": [
+    {
+      "id": "cell_projects_weekly_update",
+      "name": "Write the weekly project update",
+      "version": 6,
+      "origin": "editor",
+      "faces": [
+        "Collect the week's changes",
+        "Write the update the team reads on Monday"
+      ],
+      "reach": ["Project files", "Microsoft 365 calendar"],
+      "runs": 214,
+      "completionRate": 0.96,
+      "approver": "dana"
+    },
+    {
+      "id": "cell_projects_dates_at_risk",
+      "name": "Flag project dates at risk",
+      "version": 4,
+      "origin": "editor",
+      "faces": [
+        "Compare committed dates against the plan",
+        "Name the ones that will slip"
+      ],
+      "reach": ["Project files"],
+      "runs": 132,
+      "completionRate": 0.91,
+      "approver": "dana"
+    },
+    {
+      "id": "cell_projects_leadership_update",
+      "name": "Prepare the Monday leadership update",
+      "version": 3,
+      "origin": "editor",
+      "faces": [
+        "Turn the weekly update into a deck leadership reads in ten minutes"
+      ],
+      "reach": ["Project files"],
+      "runs": 48,
+      "completionRate": 0.88,
+      "approver": "dana"
+    }
+  ],
+  "connectome": {
+    "hash": "3f7a1c04",
+    "nodeCount": 3,
+    "edgeCount": 9,
+    "windowDays": 90,
+    "findings": [
+      {
+        "kind": "fragility",
+        "title": "Three cells depend on one reading of the plan",
+        "detail": "The update, the risk flag and the leadership deck all read the same plan file, so a wrong plan is wrong in three places at once.",
+        "action": "Check the plan before the Monday run rather than after it."
+      },
+      {
+        "kind": "redundancy",
+        "title": "The leadership deck lags the update it summarises",
+        "detail": "It runs on average four hours later, so a late change reaches the team and not leadership.",
+        "action": "Run the deck from the update, not from the plan."
+      }
+    ],
+    "limits": [
+      "Run history covers 90 days. Anything quarterly appears once or not at all.",
+      "Nothing inside a document is read; only what the cells declare."
+    ],
+    "generatedAt": "2026-01-18T09:11:44.000Z"
+  },
+  "memories": [
+    {
+      "id": "mem_projects_opening",
+      "subject": "reporting",
+      "fact": "The weekly update always opens with dates at risk.",
+      "memoryType": "convention",
+      "status": "approved"
+    },
+    {
+      "id": "mem_projects_committed",
+      "subject": "reporting",
+      "fact": "A date is only 'committed' once the customer has seen it.",
+      "memoryType": "definition",
+      "status": "approved"
+    }
+  ],
+  "notes": [
+    {
+      "path": "projects/weekly-update.md",
+      "title": "How the weekly update is written"
+    },
+    {
+      "path": "projects/dates-at-risk.md",
+      "title": "What counts as a date at risk"
+    }
+  ]
+}

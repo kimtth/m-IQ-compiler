@@ -1,0 +1,515 @@
+/* --- shell --------------------------------------------------------------- */
+
+/* Two columns and two rows: the rail down the left spanning both rows, the top
+   bar across the second column, the workbench under it.
+ *
+ * A grid rather than nested flex rows so the top bar is a sibling of the
+ * workbench instead of a child. The workbench is the sole owner of pane
+ * layout, and a bar living inside it would have read as one pane's header
+ * rather than as the name of the place the whole window is in.
+ *
+ * The rail is sized by its own `width`; `auto` here just takes it. */
+.shell {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto 1fr;
+  height: 100%;
+  background: var(--surface-sunken);
+  position: relative;
+  overflow: hidden;
+}
+
+.shell > .rail {
+  grid-column: 1;
+  grid-row: 1 / 3;
+}
+
+.shell > .topbar {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.shell > .workbench {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+/**
+ * Where you are, and the way back.
+ *
+ * A hairline under it and nothing else — no fill of its own beyond the working
+ * surface, no shadow. It is a label, not a toolbar, and giving it depth would
+ * have made the first 48px of the window compete with the work in the rest.
+ */
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: var(--s-12);
+  height: 48px;
+  padding: 0 var(--s-16);
+  background: var(--surface);
+  border-bottom: 1px solid var(--stroke);
+  min-width: 0;
+}
+
+.trail {
+  display: flex;
+  align-items: center;
+  gap: var(--s-8);
+  flex: 1 1 auto;
+  min-width: 0;
+  font: var(--t-dense);
+}
+
+/* A crumb is a link, so it is styled as text rather than as a button: the
+   row would otherwise be two outlined boxes and a slash. */
+.trail .crumb {
+  flex: none;
+  padding: 2px var(--s-4);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  background: none;
+  color: var(--fg-muted);
+  font: var(--t-dense);
+}
+
+/* `:not(:disabled)` to clear `button:hover:not(:disabled)`, which is a weight
+   above a plain class rule and would otherwise repaint the background. */
+.trail .crumb:hover:not(:disabled) {
+  background: var(--surface-hover);
+  color: var(--fg);
+}
+
+.trail .sep {
+  flex: none;
+  color: var(--fg-disabled);
+}
+
+/* The end of the trail. Not a link — you are already here — so it carries the
+   weight and the full colour, and it is the part that truncates, because it is
+   the part that can be a sentence long. */
+.trail .here {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--fg);
+  font-weight: 600;
+}
+
+/* The end-to-end harness never hides what it is. Fixed, so it stays out of the
+   shell's flex flow and cannot shift a pane's measured width. */
+.harness-banner {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 200;
+  max-width: 720px;
+  padding: var(--s-4) var(--s-12);
+  border: 1px solid var(--warning);
+  border-top: none;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  background: var(--surface);
+  color: var(--warning);
+  font: var(--t-caption);
+  text-align: center;
+  box-shadow: var(--shadow-4);
+  pointer-events: none;
+}
+
+/**
+ * Icon rail. The primary navigation surface: the mode switch pinned at the
+ * top, destinations below it, account and settings at the bottom. It is a
+ * column rather than an overlay — it never covers another pane — and it can be
+ * hidden from its own bottom group when the work needs the width.
+ *
+ * Dark navy in both themes, and the same navy in both. The rail is chrome, not
+ * work: keeping it one fixed colour means the boundary between "where I can
+ * go" and "what I am doing" is drawn by tone rather than by a hairline, and it
+ * stops the corner of the window from changing character when the theme does.
+ *
+ * The colours are re-declared as tokens on the rail rather than hardcoded into
+ * the rules below, so `.rail-item`, `.mode-switch`, `.rail-new` and the rest
+ * keep reading the same token names they always did and no descendant needs a
+ * second, rail-only rule. Every token here is one the rail actually consumes;
+ * the light values still stand everywhere else in the window.
+ *
+ * `--surface-alt` and `--surface-sunken` alias `--sidebar` at the root, so
+ * they follow the navy down here unless they are set. Both are hover and
+ * raised tones — left to follow, they would paint navy on navy.
+ */
+.rail {
+  --sidebar: #101a2e;
+  --sidebar-foreground: #eef2f9;
+  --sidebar-accent: #1a2540;
+  --sidebar-accent-foreground: #ccd6e8;
+  --sidebar-border: #263352;
+
+  --card: #1a2540;
+  --border: #263352;
+  --stroke: #263352;
+  --stroke-strong: #354466;
+  --muted-foreground: #93a2bd;
+
+  /* The base every `--*-tint` is mixed into. Custom properties resolve where
+     they are used, not where they are written, so leaving this at the root's
+     near-white made `--danger-tint` a pink wash on navy. */
+  --background: #101a2e;
+
+  --fg: #f4f7fc;
+  --fg-2: #c6d1e4;
+  --fg-muted: #93a2bd;
+  --fg-disabled: #6b7a95;
+
+  --surface: #1a2540;
+  --surface-alt: #1a2540;
+  --surface-sunken: #101a2e;
+  --surface-hover: #1f2b49;
+  --surface-active: #243254;
+  --surface-selected: #243254;
+  --surface-pressed: #243254;
+  /* The New conversation menu is anchored inside the rail, so it is the rail's
+     colour. Half a step lighter than the rail, because a shadow alone does not
+     separate two dark surfaces. */
+  --surface-raised: #202c4a;
+
+  /* The accent has to lift off navy, not sink into it. #2563eb is a light-mode
+     value chosen to read on white and it is nearly invisible here. */
+  --primary: #7ba6ff;
+  --accent: #7ba6ff;
+  --azure-blue: #7ba6ff;
+  --intelligence-indigo: #8b9dff;
+
+  width: 248px;
+  background: var(--sidebar);
+  color: var(--sidebar-foreground);
+  border-right: 1px solid var(--sidebar-border);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: var(--s-8) var(--s-8);
+  gap: var(--s-8);
+  min-height: 0;
+  /* The last resort. Destinations are fixed-height rows and the mode switch,
+     the sub-modes, the surfaces and the bottom group together are taller than
+     a short window — measured at 932px against 798px of rail in Co-create.
+     Without this the overflow is simply painted past the bottom of the window
+     and the way out is unreachable. */
+  overflow-y: auto;
+  position: relative;
+  z-index: 4;
+}
+
+/* Hidden means icon-only, not gone.
+ *
+ * It used to mean `display: none`, on the argument that a strip is still a
+ * column taking width from the work. That traded 248px for the loss of every
+ * destination: the mode switch, the bound project, Control Center and the
+ * theme all left the window together, and the only thing left was one button
+ * to bring them back. Hiding the labels recovers 192px of the 248 and keeps
+ * every target on screen and one click away.
+ *
+ * 56px is the arithmetic: 8px of rail padding either side, and a 40px row —
+ * 8px of its own padding either side around a 24px glyph.
+ */
+.rail.icons {
+  width: 56px;
+  overflow-x: hidden;
+}
+
+/* Everything that is words. The glyph is the whole entry now, and each one
+   keeps the tooltip and the accessible name it already carried, so nothing
+   loses its identity by losing its label. */
+.rail.icons .rail-item .label,
+.rail.icons .rail-brand .label,
+.rail.icons .mode-segment .label,
+.rail.icons .rail-new > span,
+.rail.icons .rail-heading {
+  display: none;
+}
+
+/* Centred on the 40px column the rest of the rail uses, so the mark sits on
+   the same axis as every glyph below it. */
+.rail.icons .rail-brand {
+  justify-content: center;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.rail.icons .rail-item {
+  grid-template-columns: 24px;
+  justify-content: center;
+  column-gap: 0;
+}
+
+/* The conversation list is not in the rail. It lives on Home and in the
+   History flyout, so hiding the rail costs labels and nothing else. */
+
+.rail.icons .mode-segment {
+  justify-content: center;
+}
+
+.rail.icons .rail-new {
+  padding: 8px 0;
+}
+
+/* Home and New conversation stack rather than sit side by side: 40px of usable
+   width fits one square button, not two. Stacking keeps both, which is the
+   whole point of narrowing to icons instead of hiding the rail. */
+.rail.icons .rail-new-row {
+  flex-direction: column;
+  gap: var(--s-4);
+}
+
+.rail.icons .rail-home {
+  width: auto;
+  padding: 8px 0;
+}
+
+/**
+ * The product mark, pinned to the top of the rail.
+ *
+ * Deliberately not a button and deliberately unpainted: no background, no
+ * border, no hover. The gradient squircle in `Logo.tsx` is the whole mark, and
+ * a plate behind it would make it read as one more thing to press. It never
+ * scrolls away — it sits above `.rail-group.nav`, which is the group that
+ * scrolls.
+ */
+.rail-brand {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: var(--s-8);
+  padding: var(--s-4) var(--s-8) var(--s-8);
+  background: none;
+  border: none;
+  user-select: none;
+}
+
+.rail-brand svg {
+  flex: none;
+  display: block;
+}
+
+.rail-brand .label {
+  font: var(--t-body);
+  font-weight: 600;
+  letter-spacing: -0.012em;
+  color: var(--sidebar-foreground);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rail-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  min-height: 0;
+}
+
+/* Destinations. This is the group that grows — Co-create lists four sub-modes
+   and six surfaces — so it is the group that scrolls, which keeps the mode
+   switch at the top and the bottom group at the bottom where they were.
+
+   Rows never compress. A rail entry is a fixed-height row, and letting flex
+   shrink them clips labels through the middle. */
+.rail-group.nav {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.rail-group.bottom {
+  margin-top: auto;
+  border-top: 1px solid var(--sidebar-border);
+  padding-top: var(--s-8);
+  flex: 0 0 auto;
+}
+
+/* Category label above a group of rail entries: 11px uppercase meta. */
+.rail-heading {
+  font: var(--t-meta);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted-foreground);
+  padding: var(--s-12) var(--s-8) var(--s-4);
+  flex: 0 0 auto;
+}
+
+/* A rule between rail entries, where a heading would be wrong. IQ Cell uses
+   one to separate My IQ from the four places its material comes from: the
+   entries below are not a named group, they are inputs, and the only thing
+   that needs saying is that a boundary is there. Survives the icons-only rail,
+   where a heading disappears and the boundary would go with it. */
+.rail-rule {
+  flex: 0 0 auto;
+  height: 1px;
+  margin: var(--s-4) var(--s-8);
+  border: none;
+  background: var(--sidebar-border);
+}
+
+.rail-item {
+  position: relative;
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  align-items: center;
+  column-gap: var(--s-12);
+  background: none;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  padding: 8px;
+  color: var(--fg-2);
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  /* Never shrink. A row is as tall as its content or it is unreadable. */
+  flex: 0 0 auto;
+  transition:
+    background var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease);
+}
+
+.rail-item:hover {
+  background: var(--sidebar-accent);
+}
+
+/* A rail entry that carries a row-level action (delete a conversation). The
+   action is a sibling button, never nested inside the entry's own button. */
+.rail-row {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  min-width: 0;
+  flex: 0 0 auto;
+}
+
+/* Inside the row the entry takes the width; the `flex: 0 0 auto` above is
+   about the column, and this is about the row. */
+.rail-row > .rail-item {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.rail-action {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  color: var(--fg-muted);
+  opacity: 0;
+  transition:
+    opacity var(--dur-fast) var(--ease),
+    background var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease);
+}
+
+.rail-row:hover .rail-action,
+.rail-row:focus-within .rail-action,
+.rail-action:focus-visible,
+.rail-action.armed {
+  opacity: 1;
+}
+
+.rail-action:hover,
+.rail-action.armed {
+  color: var(--danger);
+  border-color: var(--danger);
+  background: var(--danger-tint);
+}
+
+/* Rename is not destructive, so it does not borrow the delete colour. It is
+   the first action on the row because it is the one that gets used. */
+.rail-row .rail-action:first-of-type:not(.armed):hover {
+  color: var(--fg);
+  border-color: var(--stroke-strong);
+  background: var(--surface-alt);
+}
+
+/* Renaming happens in place: a rail row is where the name is read, so it is
+   where it should be corrected. */
+.rail-rename {
+  flex: 1 1 auto;
+  min-width: 0;
+  font: var(--t-body);
+  padding: 6px var(--s-8);
+}
+
+.rail-item .glyph {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  color: inherit;
+}
+
+.rail-item .label {
+  font: var(--t-dense);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  /* Labels wrap rather than truncate. "IQ Cell library (workflow)" with its
+     Beta chip is wider than the 248px rail, and an ellipsis there hides the
+     word that says which library it is. */
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+/* The secondary line under a rail entry.
+
+   One line, ellipsised, with the full text on the entry's tooltip. A detail is
+   the only sentence that says what a destination *is* — "Your knowledge,
+   intelligence, and workflows" under My IQ, "Build Microsoft
+   Fabric artifacts from your data definitions" under Fabric — so it has to be
+   on screen, but at 248px the long ones wrapped to three lines each. Co-create
+   lists nine destinations, and at that height the conversation list below them
+   had nothing left but its floor.
+
+   So the height is fixed at one line per row and the remainder is recoverable
+   by hover rather than lost: the short details, which are most of them, read in
+   full and gain nothing from the tooltip, and the long ones still say enough to
+   tell two destinations apart. `overflow: hidden` is what makes the ellipsis
+   appear; `display: block` keeps the detail on its own row under the label. */
+.rail-item .detail {
+  font: var(--t-caption);
+  color: var(--muted-foreground);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: block;
+}
+
+/* Glyph + stacked label/detail read as one entry. */
+.rail-item .label {
+  grid-column: 2;
+}
+
+.rail-item .detail {
+  grid-column: 2;
+}
+
+.rail-item.active {
+  background: var(--surface-selected);
+  color: var(--fg);
+  font-weight: 600;
+}
+
+.rail-item.active::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 22px;
+  border-radius: var(--radius-circular);
+  background: var(--intelligence-indigo);
+}

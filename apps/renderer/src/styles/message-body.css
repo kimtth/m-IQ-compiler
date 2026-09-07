@@ -1,0 +1,104 @@
+/* --- structure inside a message body ------------------------------------- *
+ * A fenced block is a container, not a paragraph. The bubble is pre-wrapped
+ * prose, and a JSON verdict folded into it — fence markers and all — was the
+ * most structured answer the app produces rendered as its least readable.
+ * Shared with a council member's argument, which is prose written by a model
+ * and just as likely to arrive as an object. */
+.code-block {
+  margin: var(--s-8) 0;
+  border: 1px solid var(--code-border);
+  border-radius: var(--radius-md);
+  background: var(--code-bg);
+  overflow: hidden;
+  white-space: normal;
+}
+
+.code-block > .lang {
+  display: block;
+  padding: var(--s-4) var(--s-8);
+  border-bottom: 1px solid var(--code-border);
+  font: var(--t-caption);
+  color: var(--fg-muted);
+}
+
+.code-block > pre {
+  margin: 0;
+  padding: var(--s-12);
+  font: 12px/1.55 var(--font-mono);
+  color: var(--code-fg);
+  white-space: pre;
+  overflow: auto;
+  max-height: 420px;
+}
+
+.code-block > pre code {
+  font: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.msg .bubble code,
+.member-argument code {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  background: var(--code-bg);
+  border: 1px solid var(--code-border);
+  border-radius: var(--radius-sm);
+  padding: 0 var(--s-4);
+}
+
+.msg .bubble strong,
+.member-argument strong {
+  font-weight: 600;
+}
+
+/* A member's argument keeps its own line breaks, like a bubble does. */
+.member-argument {
+  padding-top: var(--s-8);
+  font: var(--t-body);
+  white-space: pre-wrap;
+}
+
+/*
+ * The user's own words sit right in a tinted bubble; the agent's sit left as
+ * plain text.
+ *
+ * The agent has no box. It used to have one, and in the light theme it was a
+ * white fill on a near-white pane — so the fill said nothing and all that was
+ * left was an outline drawn around every answer in the transcript. Side,
+ * speaker label and badge already say who is talking, three times over. The
+ * one who needs a shape is the user, because the user's turns are short and
+ * scattered through a column of the agent's.
+ */
+.msg.from-user {
+  margin-left: auto;
+  align-items: flex-end;
+}
+
+.msg.from-user .bubble {
+  background: var(--message-user-bg);
+  color: var(--message-user-fg);
+  border: 1px solid color-mix(in srgb, var(--primary) 20%, transparent);
+  border-radius: var(--radius-lg) var(--radius-lg) var(--radius-sm) var(--radius-lg);
+}
+
+/* No fill, no border, and no side padding — so the answer starts on the same
+   vertical line as the speaker label above it. */
+.msg.from-agent .bubble {
+  background: none;
+  color: var(--message-agent-fg);
+  border: none;
+  padding: var(--s-2) 0 var(--s-4);
+}
+
+@keyframes msg-arrive {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+.msg {
+  animation: msg-arrive var(--dur-normal) var(--ease-out);
+}

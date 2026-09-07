@@ -1,0 +1,41 @@
+{
+  "name": "iq-compiler",
+  "version": "0.1.0",
+  "private": true,
+  "description": "IQ Compiler - a Microsoft-ecosystem agent workspace built on the GitHub Copilot SDK",
+  "packageManager": "pnpm@10.32.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "clean:build": "node scripts/clean-build.mjs",
+    "industry:limit": "node scripts/apply-limited-industry.mjs",
+    "industry:limit:check": "node scripts/apply-limited-industry.mjs --check",
+    "deps": "pnpm --filter @iq/shared build && pnpm --filter @iq/core build && pnpm --filter @iq/preload build && pnpm --filter @iq/myiq-mcp build",
+    "build": "pnpm run clean:build && pnpm run deps && pnpm --filter @iq/renderer build && pnpm --filter @iq/main build",
+    "start": "pnpm run build && electron apps/main",
+    "package": "node scripts/package-app.mjs",
+    "package:fast": "node scripts/package-app.mjs --no-build",
+    "typecheck": "tsc -b packages/shared packages/core packages/myiq-mcp apps/preload apps/main",
+    "prepare:ffmpeg": "node scripts/prepare-media.mjs ffmpeg",
+    "prepare:whisper": "node scripts/prepare-media.mjs whisper",
+    "prepare:media": "node scripts/prepare-media.mjs all",
+    "prepare:audio": "node scripts/prepare-audio.mjs",
+    "prepare:research": "node scripts/prepare-research.mjs",
+    "prepare:evolve": "node scripts/prepare-evolve.mjs",
+    "prepare:fabric-skills": "node scripts/prepare-fabric-skills.mjs",
+    "test": "vitest run",
+    "test:e2e": "vitest run --config vitest.e2e.config.ts"
+  },
+  "devDependencies": {
+    "@electron/packager": "^20.3.0",
+    "@iq/core": "workspace:*",
+    "@iq/shared": "workspace:*",
+    "@types/node": "^22.10.2",
+    "electron": "^39.8.8",
+    "playwright-core": "^1.49.1",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4",
+    "zod": "^3.25.76"
+  }
+}

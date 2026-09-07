@@ -1,0 +1,37 @@
+/**
+ * The stylesheet, in source order.
+ *
+ * Order is load-bearing, not cosmetic: several rules win only because they
+ * come later, so these imports must stay in exactly this sequence. Vite
+ * inlines them, so the built bundle is the same file it always was.
+ */
+@import "./theme.css";
+@import "./styles/base.css";
+@import "./styles/primitives.css";
+@import "./styles/shell.css";
+@import "./styles/mode-switch.css";
+@import "./styles/conversation-list.css";
+@import "./styles/panes.css";
+@import "./styles/canvas-tabs.css";
+@import "./styles/navigator.css";
+@import "./styles/composer.css";
+@import "./styles/message-body.css";
+@import "./styles/turn-activity.css";
+@import "./styles/council.css";
+@import "./styles/control-center.css";
+@import "./styles/cards.css";
+@import "./styles/connections.css";
+@import "./styles/sign-in.css";
+@import "./styles/canvas-file-viewer.css";
+@import "./styles/iq-cell.css";
+@import "./styles/iq-cell-canvas.css";
+@import "./styles/iq-cell-drawer.css";
+@import "./styles/iq-cell-library.css";
+@import "./styles/connectome.css";
+@import "./styles/connectome-node.css";
+@import "./styles/connectome-iq.css";
+@import "./styles/how-built.css";
+@import "./styles/research-graph.css";
+@import "./styles/office-preview.css";
+@import "./styles/iq-industry.css";
+@import "./styles/markdown.css";

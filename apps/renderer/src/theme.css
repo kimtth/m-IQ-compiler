@@ -1,0 +1,409 @@
+/**
+ * Design tokens — the application's visual language.
+ *
+ * Colour, typography, radius and elevation are defined once here and referenced
+ * by role rather than by value. Prismatic Intelligence pairs a calm cloud
+ * canvas with purposeful Azure blue, cyan, indigo, violet and orange accents.
+ * Colour explains a product area or a state; dense operational surfaces stay
+ * neutral so the work remains easy to scan.
+ *
+ * Rules that hold everywhere:
+ *   - Components never hardcode a hex value; they read these custom properties.
+ *   - Light is the `:root` default. Dark is a `[data-theme='dark']` override of
+ *     the SAME token names, so no component ever branches on the active theme.
+ *   - Role names (--background, --card, --muted, --accent, --border, --ring,
+ *     --sidebar…) are the canonical tokens. The names this app already used
+ *     (--surface*, --fg*, --stroke*, --brand-*) are kept as thin aliases over
+ *     them, so every existing component picks up the look unchanged.
+ *   - Tints are produced with `color-mix` against an existing token rather than
+ *     a new hex, which keeps light/dark parity automatic.
+ */
+
+@font-face {
+  font-family: "Geist";
+  src: url("./fonts/Geist-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* == role tokens (light) =============================================== */
+  --background: #f9fafb;
+  --foreground: #0f172a;
+  --card: #ffffff;
+  --card-foreground: #0f172a;
+  --popover: #ffffff;
+  --popover-foreground: #0f172a;
+  --primary: #2563eb;
+  --primary-foreground: #ffffff;
+  --secondary: #f3f4f6;
+  --secondary-foreground: #334155;
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+  --accent-surface: #f3f4f6;
+  --accent-surface-foreground: #334155;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: #dbe5f1;
+  --border-strong: #c5d3e4;
+  --input: #c5d3e4;
+  --ring: #93c5fd;
+  --editor-surface: #ffffff;
+  --sidebar: #fbfcfe;
+  --sidebar-foreground: #0f172a;
+  --sidebar-accent: #f3f4f6;
+  --sidebar-accent-foreground: #334155;
+  --sidebar-border: #dbe5f1;
+  --status-success: #059669;
+  --status-warning: #b45309;
+
+  --azure-blue: #2563eb;
+  --intelligence-cyan: #06b6d4;
+  --intelligence-indigo: #4f46e5;
+  --intelligence-violet: #8b5cf6;
+  --creation-green: #16a34a;
+  --creation-orange: #f97316;
+  --success-emerald: #10b981;
+  --warning-amber: #f59e0b;
+  --error-coral: #ef4444;
+
+  /* Knowledge-graph node kinds. A categorical palette for graph lanes, chosen
+     to stay distinguishable for colour-blind users — the one place in the app
+     where hue carries meaning. */
+  --graph-document: var(--intelligence-cyan);
+  --graph-skill: var(--intelligence-violet);
+  --graph-tag: var(--intelligence-indigo);
+  --graph-missing: var(--creation-orange);
+
+  /* The graph picture itself is neutral. Kind is answered by the detail panel
+     and the table; four hues over a few hundred dots is a pattern the eye reads
+     before it reads the shape, which is backwards for a map whose subject is
+     the shape. */
+  --graph-node: #4f6b8f;
+  --graph-link: #c7d6e8;
+
+  /* Research's workflow canvas sits on a card, not the dark Connectome void.
+     Labels are dark slate on white, with muted blue-grey links. Hue is the kind
+     of step — the opposite call from the Connectome map above, because this
+     graph is five stages and a dozen nodes, not a few hundred, and which stage
+     a node belongs to is the first thing a reader asks. Status is carried by
+     the treatment of that hue instead: faded, ringed, solid, grey. */
+  --research-graph-label: #334155;
+  --research-graph-link: #64748b;
+  --research-graph-plan: #7c3aed;
+  --research-graph-research: #2563eb;
+  --research-graph-question: #0d9488;
+  --research-graph-reflect: #d97706;
+  --research-graph-synthesize: #be185d;
+  --research-graph-pending: #94a3b8;
+  --research-graph-running: #2563eb;
+  --research-graph-running-ring: #93c5fd;
+  --research-graph-done: #0f766e;
+  --research-graph-failed: #dc2626;
+  --research-graph-skipped: #a1a1aa;
+
+  /* IQ Workflow node families. Categorical like the graph tokens above: hue
+     carries meaning here, so it is data rather than chrome. Three, because the
+     vocabulary has three — the process itself, what it handles, and remarks
+     about the drawing. */
+  --family-flow: #007acc;
+  --family-context: #0f8a6a;
+  --family-annotation: #a15c00;
+  --port-control: var(--fg-muted, #737373);
+
+  /* My IQ fibre field. The map is a data surface, so it carries the one
+     saturated palette in the product; the chrome around it stays monochrome.
+     The void is dark in *both* themes: the render is additive, and additive
+     light needs somewhere dark to be added to. Only the map uses these. */
+  --fibre-x: var(--intelligence-cyan);
+  --fibre-y: var(--intelligence-indigo);
+  --fibre-z: var(--intelligence-violet);
+  --fibre-void: #05070c;
+
+  /* Soma glow, by completion rate. The same green→red ramp the halo shader
+     builds from `completionRate`, so the legend swatches cannot drift from
+     the picture. */
+  --soma-healthy: var(--success-emerald);
+  --soma-degraded: var(--warning-amber);
+  --soma-failing: var(--error-coral);
+  /* Text and hairlines that sit on the void rather than on an app surface. */
+  --on-fibre-void: #e8ecf4;
+  --on-fibre-void-muted: #8e9bb3;
+
+  /* == background scale ================================================== *
+   * Four elevations plus the border tone. The chrome is quiet, so depth
+   * comes from a half-step of grey and a hairline — not from heavy shadow. */
+  --bg-base: var(--background);
+  --bg-1: var(--sidebar);
+  --bg-2: var(--muted);
+  --bg-3: var(--border);
+
+  /* == "brand" ramp ====================================================== *
+   * The ramp is monochrome: anything that used to read as a blue accent now
+   * reads as quiet chrome. --brand-base is the base step. */
+  --brand-1: #eff6ff;
+  --brand-2: #dbeafe;
+  --brand-3: #bfdbfe;
+  --brand-4: #93c5fd;
+  --brand-5: #60a5fa;
+  --brand-6: #3b82f6;
+  --brand-7: #2563eb;
+  --brand-8: #1d4ed8;
+  --brand-9: #1e40af;
+  --brand-10: #1e3a8a;
+  --brand-base: var(--primary);
+
+  /* Interactive primary. Gradients belong to clear actions, not dense data. */
+  --primary-hover: #1d4ed8;
+  --primary-pressed: #1e40af;
+  --primary-fg: var(--primary-foreground);
+  --primary-tint: color-mix(in srgb, var(--primary) 8%, var(--background));
+  --primary-tint-strong: color-mix(in srgb, var(--primary) 14%, var(--background));
+  --primary-ring: var(--ring);
+
+  /* == semantic status =================================================== */
+  --success: var(--status-success);
+  --success-tint: color-mix(in srgb, var(--status-success) 10%, var(--background));
+  --warning: var(--status-warning);
+  --warning-tint: color-mix(in srgb, var(--status-warning) 10%, var(--background));
+  --danger: var(--destructive);
+  --danger-tint: color-mix(in srgb, var(--destructive) 10%, var(--background));
+
+  /* == neutral surfaces ================================================== */
+  --surface: var(--card);
+  --surface-alt: var(--sidebar);
+  --surface-sunken: var(--sidebar);
+  --surface-raised: var(--popover);
+  --surface-hover: var(--accent-surface);
+  --surface-pressed: var(--border);
+  /* A selected row is `accent`, never an invented "selected" colour. */
+  --surface-selected: #f1f5f9;
+  --surface-active: #f1f5f9;
+  --scrim: rgba(10, 10, 10, 0.32);
+
+  /* == strokes =========================================================== */
+  --stroke: var(--border);
+  --stroke-strong: var(--border-strong);
+
+  /* == foreground ======================================================== */
+  --fg: var(--foreground);
+  --fg-2: #334155;
+  --fg-muted: var(--muted-foreground);
+  --fg-disabled: #94a3b8;
+  --fg-on-accent: var(--primary-foreground);
+
+  /* == legacy accent aliases → primary =================================== */
+  --accent: var(--primary);
+  --accent-hover: var(--primary-hover);
+  --accent-pressed: var(--primary-pressed);
+  --accent-tint: var(--accent-surface);
+  --accent-tint-2: var(--border);
+
+  /* == legacy status aliases ============================================= */
+  --ok: var(--success);
+  --ok-tint: var(--success-tint);
+  --warn: var(--warning);
+  --warn-tint: var(--warning-tint);
+
+  /* == role tokens (consumed at the call site) =========================== *
+   * The two message roles have to be told apart at a glance in a monochrome
+   * palette, so the distinction is carried by *fill weight* rather than hue:
+   * the user's own words sit on a tinted surface, the agent's on the plain
+   * card with a hairline. Alignment and the speaker badge do the rest. */
+  --message-user-bg: var(--primary-tint);
+  --message-user-fg: var(--secondary-foreground);
+  --message-agent-bg: var(--card);
+  --message-agent-fg: var(--card-foreground);
+  --message-agent-border: var(--border);
+
+  --tool-card-bg: var(--card);
+  --tool-card-border: var(--border);
+  --tool-card-head-bg: var(--muted);
+
+  --code-bg: var(--muted);
+  --code-fg: var(--fg-2);
+  --code-border: var(--border);
+
+  --chip-bg: var(--muted);
+  --chip-fg: var(--muted-foreground);
+
+  --skeleton-base: var(--muted);
+  --skeleton-sheen: rgba(255, 255, 255, 0.6);
+
+  /* == shape ============================================================= */
+  --radius: 0.625rem;
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-circular: 999px;
+
+  /* == elevation ========================================================= *
+   * Three levels are available: hairline, subtle lift, and floating. The
+   * legacy four-step names collapse onto them; there is no fourth level. */
+  --shadow-2: 0 1px 2px rgba(10, 10, 10, 0.05);
+  --shadow-4: 0 1px 2px rgba(10, 10, 10, 0.06), 0 1px 3px rgba(10, 10, 10, 0.05);
+  --shadow-8: 0 10px 24px rgba(0, 0, 0, 0.18);
+  --shadow-16: 0 10px 24px rgba(0, 0, 0, 0.18);
+
+  /* == "gradients" ======================================================= *
+   * Kept as tokens so call sites are unchanged, but flat: this system does not
+   * use gradient fills, and a tinted button would break the monochrome read. */
+  --gradient-primary: linear-gradient(135deg, var(--azure-blue), var(--intelligence-violet));
+  --gradient-primary-hover: linear-gradient(135deg, #1d4ed8, #7c3aed);
+  --gradient-brand-subtle: linear-gradient(135deg, #eff6ff, #f5f3ff);
+
+  /* == spacing ramp ====================================================== */
+  --s-2: 2px;
+  --s-4: 4px;
+  --s-8: 8px;
+  --s-12: 12px;
+  --s-16: 16px;
+  --s-20: 20px;
+  --s-24: 24px;
+  --s-32: 32px;
+
+  /* == type ramp ========================================================= *
+   * Geist for sans, always. Body letter-spacing is 0.01em, set once on body. */
+  --app-font-family: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font: var(--app-font-family);
+  --font-display: var(--app-font-family);
+  --font-mono:
+    "SF Mono", SFMono-Regular, ui-monospace, "Cascadia Code", Menlo, Consolas, "Liberation Mono",
+    monospace;
+  --t-meta: 600 11px/16px var(--font);
+  --t-caption: 12px/16px var(--font);
+  --t-dense: 13px/18px var(--font);
+  --t-body: 14px/20px var(--font);
+  --t-body-lg: 16px/24px var(--font);
+  --t-subtitle: 20px/28px var(--font-display);
+  --t-title: 28px/36px var(--font-display);
+
+  /* == motion ============================================================ */
+  --dur-fast: 100ms;
+  --dur-normal: 180ms;
+  --dur-slow: 280ms;
+  --ease: cubic-bezier(0.33, 0, 0.67, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+  color-scheme: light;
+}
+
+/**
+ * Dark theme. Opt-in only: set data-theme="dark" on <html>. Every token that
+ * changes between schemes is redefined here over the SAME names, so nothing
+ * downstream needs to know which theme is live.
+ */
+[data-theme="dark"] {
+  --background: #0b1220;
+
+  --family-flow: #4aa8ff;
+  --family-context: #35c8a0;
+  --family-annotation: #d99a3a;
+  --foreground: #e6eefb;
+  --card: #111c2e;
+  --card-foreground: #e6eefb;
+  --popover: #14213a;
+  --popover-foreground: #e6eefb;
+  --primary: #60a5fa;
+  --primary-foreground: #08111f;
+  --secondary: #172740;
+  --secondary-foreground: #dbeafe;
+  --muted: #17233a;
+  --muted-foreground: #9cb0ce;
+  --accent-surface: #182b49;
+  --accent-surface-foreground: #dbeafe;
+  --destructive: #fb7185;
+  --destructive-foreground: #ffffff;
+  --border: rgb(173 198 235 / 0.14);
+  --border-strong: rgb(173 198 235 / 0.28);
+  --input: rgb(173 198 235 / 0.28);
+  --ring: #60a5fa;
+  --editor-surface: #1e1e1e;
+  --sidebar: #0e192b;
+  --sidebar-foreground: #e6eefb;
+  --sidebar-accent: #182b49;
+  --sidebar-accent-foreground: #e6efff;
+  --sidebar-border: rgb(173 198 235 / 0.14);
+  --status-success: #34d399;
+  --status-warning: #fbbf24;
+
+  --graph-document: #3794ff;
+  --graph-node: #c9c9c9;
+  --graph-link: #4a4a4a;
+
+  --research-graph-label: #e5e7eb;
+  --research-graph-link: #94a3b8;
+  --research-graph-plan: #a78bfa;
+  --research-graph-research: #60a5fa;
+  --research-graph-question: #2dd4bf;
+  --research-graph-reflect: #fbbf24;
+  --research-graph-synthesize: #f472b6;
+  --research-graph-pending: #94a3b8;
+  --research-graph-running: #60a5fa;
+  --research-graph-running-ring: #bfdbfe;
+  --research-graph-done: #5eead4;
+  --research-graph-failed: #f87171;
+  --research-graph-skipped: #71717a;
+
+  --brand-1: #0e192b;
+  --brand-2: #14213a;
+  --brand-3: #172b4d;
+  --brand-4: #1e3a8a;
+  --brand-5: #2563eb;
+  --brand-6: #3b82f6;
+  --brand-7: #60a5fa;
+  --brand-8: #93c5fd;
+  --brand-9: #bfdbfe;
+  --brand-10: #dbeafe;
+
+  --primary-hover: #93c5fd;
+  --primary-pressed: #bfdbfe;
+  --primary-tint: color-mix(in srgb, var(--primary) 10%, var(--background));
+  --primary-tint-strong: color-mix(in srgb, var(--primary) 18%, var(--background));
+
+  --surface-sunken: var(--background);
+  --surface-alt: var(--sidebar);
+  --surface-pressed: #1f3454;
+  --surface-selected: #182f52;
+  --surface-active: #182f52;
+  --fg-2: #d5e2f5;
+  --fg-disabled: #607595;
+
+  --scrim: rgba(0, 0, 0, 0.6);
+
+  --code-bg: var(--background);
+  --skeleton-sheen: rgba(255, 255, 255, 0.08);
+
+  --gradient-primary: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  --gradient-primary-hover: linear-gradient(135deg, #60a5fa, #a78bfa);
+  --gradient-brand-subtle: linear-gradient(135deg, #10254a, #241747);
+
+  --shadow-2: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-4: 0 1px 2px rgba(0, 0, 0, 0.45), 0 1px 3px rgba(0, 0, 0, 0.4);
+  --shadow-8: 0 10px 24px rgba(0, 0, 0, 0.5);
+  --shadow-16: 0 10px 24px rgba(0, 0, 0, 0.5);
+
+  color-scheme: dark;
+}
+
+/* Theme swaps flip many variables at once; without this, parts of the UI fade
+   at different speeds. Animations stay enabled so spinners keep spinning. */
+.theme-transition-disabled *,
+.theme-transition-disabled *::before,
+.theme-transition-disabled *::after {
+  transition: none !important;
+}
+
+/* Honour the user's reduced-motion preference: keep meaning, drop movement. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

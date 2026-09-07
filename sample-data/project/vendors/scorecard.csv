@@ -1,0 +1,9 @@
+vendor_code,vendor_name,area,sla_met_percent,open_advisories,open_escalations,support_rating,contract_review_due
+VEN-0412,Halbert Auth,Auth libraries,88.4,4,2,C,2026-04-30
+VEN-0877,Verrick Streaming,Event streaming,96.1,0,0,A,2026-09-15
+VEN-1103,Oster Secrets,Secret management,93.7,1,1,B,2026-06-01
+VEN-0641,Marlow Forms,UI forms,97.8,0,0,A,2027-01-20
+VEN-0233,Kestrel Charts,Data visualisation,91.2,2,1,B,2026-11-08
+VEN-0519,Brant Data,Database tooling,98.5,0,0,A,2027-03-12
+VEN-0704,Ludvig Grids,Table components,85.9,6,3,D,2026-03-31
+VEN-0958,Ainsley Observability,Tracing,94.6,1,0,B,2026-08-22

@@ -1,0 +1,395 @@
+/* --- council transcript (Team mode) -------------------------------------- */
+.round-group {
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-lg);
+  background: var(--surface-alt);
+  padding: var(--s-12);
+  margin-bottom: var(--s-12);
+}
+
+.round-group > .head,
+.round-group > h3 {
+  margin: 0 0 var(--s-8);
+  font: var(--t-caption);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--fg-muted);
+}
+
+.member-card {
+  border: 1px solid var(--stroke);
+  border-left: 3px solid var(--primary);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  padding: var(--s-8) var(--s-12);
+  margin-bottom: var(--s-8);
+}
+
+.member-card .head {
+  display: flex;
+  align-items: center;
+  gap: var(--s-8);
+  font: var(--t-caption);
+  color: var(--fg-muted);
+  margin-bottom: var(--s-4);
+}
+
+.member-card .head strong {
+  color: var(--fg);
+  font: var(--t-body);
+}
+
+/*
+ * Council seats.
+ *
+ * Six tints, one per possible member. Deliberately low-saturation fills with a
+ * saturated glyph: the avatar is there to tell two speakers apart at a glance,
+ * not to compete with the argument next to it. Colour is never the only signal
+ * — the name is always beside it — so this stays readable without it.
+ */
+.member-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1px solid var(--stroke);
+  background: var(--surface-alt);
+  color: var(--fg-muted);
+}
+
+.member-avatar.seat-0 {
+  background: #eef2ff;
+  border-color: #c7d2fe;
+  color: #4338ca;
+}
+.member-avatar.seat-1 {
+  background: #ecfdf5;
+  border-color: #a7f3d0;
+  color: #047857;
+}
+.member-avatar.seat-2 {
+  background: #fff7ed;
+  border-color: #fed7aa;
+  color: #c2410c;
+}
+.member-avatar.seat-3 {
+  background: #fdf4ff;
+  border-color: #f5d0fe;
+  color: #a21caf;
+}
+.member-avatar.seat-4 {
+  background: #f0f9ff;
+  border-color: #bae6fd;
+  color: #0369a1;
+}
+.member-avatar.seat-5 {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #b91c1c;
+}
+
+/* Dark theme keeps the hue and swaps the weight: a pale fill that reads as a
+   highlight on white reads as a hole punched in a dark surface. */
+[data-theme="dark"] .member-avatar.seat-0 {
+  background: #1e1b4b;
+  border-color: #3730a3;
+  color: #a5b4fc;
+}
+[data-theme="dark"] .member-avatar.seat-1 {
+  background: #052e16;
+  border-color: #166534;
+  color: #6ee7b7;
+}
+[data-theme="dark"] .member-avatar.seat-2 {
+  background: #431407;
+  border-color: #9a3412;
+  color: #fdba74;
+}
+[data-theme="dark"] .member-avatar.seat-3 {
+  background: #4a044e;
+  border-color: #a21caf;
+  color: #f0abfc;
+}
+[data-theme="dark"] .member-avatar.seat-4 {
+  background: #082f49;
+  border-color: #0369a1;
+  color: #7dd3fc;
+}
+[data-theme="dark"] .member-avatar.seat-5 {
+  background: #450a0a;
+  border-color: #b91c1c;
+  color: #fca5a5;
+}
+
+/* --- research plan ------------------------------------------------------- */
+.plan-question {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  padding: var(--s-12);
+  margin-bottom: var(--s-8);
+}
+
+.plan-question .head {
+  display: flex;
+  align-items: center;
+  gap: var(--s-8);
+}
+
+.plan-question .head strong {
+  flex: 1;
+}
+
+/* --- report feedback -----------------------------------------------------
+   The reader's answer to a finished report. Kept quiet on purpose: this sits
+   under a document, so a tinted panel would compete with the thing it is
+   about. The one accent is the leading rule on a past note, which is what
+   makes a note read as something a person said rather than as more report. */
+.report-feedback {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-8);
+  margin-top: var(--s-16);
+  padding-top: var(--s-12);
+  border-top: 1px solid var(--stroke);
+}
+
+.feedback-label {
+  font-weight: 600;
+  font-size: var(--text-sm);
+}
+
+.feedback-history {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-8);
+}
+
+.feedback-note {
+  border-left: 2px solid var(--intelligence-violet);
+  padding-left: var(--s-12);
+}
+
+.feedback-said {
+  font-style: italic;
+}
+
+.feedback-raised {
+  margin: var(--s-4) 0 0;
+  padding-left: var(--s-16);
+  color: var(--fg-2);
+  font-size: var(--text-sm);
+}
+
+/* --- image grid (Image Creation) ----------------------------------------- */
+.image-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--s-12);
+}
+
+.image-cell {
+  position: relative;
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--surface-sunken);
+  aspect-ratio: 1 / 1;
+  display: grid;
+  place-items: center;
+  transition: box-shadow var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
+}
+
+.image-cell:hover {
+  border-color: var(--primary);
+  box-shadow: var(--shadow-8);
+}
+
+.image-cell img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* A run restored from the index whose file is no longer where it was saved.
+   The cell keeps its shape so the grid does not reflow, and says which file is
+   missing rather than drawing a broken frame. */
+.image-missing {
+  padding: var(--s-16);
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+/* --- image conversation (Image Creation) ---------------------------------
+
+   Making an image is a conversation, so the surface is one: prompts and their
+   results run down the page oldest first, with a composer pinned underneath.
+   The composer is the chat composer, class for class — this is the same act as
+   sending a message, and giving it a second visual language would be a lie
+   about how it works. */
+.image-studio {
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.image-thread {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-24);
+}
+
+.image-turn {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-8);
+}
+
+/* What was asked, on the right, the way a sent message sits. */
+.image-ask {
+  align-self: flex-end;
+  max-width: 70ch;
+  padding: var(--s-8) var(--s-12);
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-lg);
+  background: var(--surface-alt);
+}
+
+.image-ask p {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.image-turn-tag {
+  display: block;
+  font: var(--t-caption);
+  color: var(--fg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: var(--s-2);
+}
+
+.image-answer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-8);
+  align-items: flex-start;
+}
+
+/* A single draft at 640px reads as a picture; stretched across a wide pane it
+   reads as a banner. More than one and they share the same box. */
+.image-answer .image-grid {
+  width: min(100%, 640px);
+}
+
+/* The image the next prompt will change. In a thread of near-identical drafts
+   this is the only thing that says which one is live. */
+.image-cell.is-parent {
+  border-color: var(--primary);
+  box-shadow: var(--shadow-16);
+}
+
+/* Five actions per image is too many to sit under every draft. They come up on
+   the picture on hover, and on keyboard focus, so they are reachable without a
+   mouse. */
+.image-cell > .row {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  justify-content: center;
+  gap: var(--s-4);
+  padding: var(--s-4);
+  background: linear-gradient(to top, rgb(0 0 0 / 55%), transparent);
+  opacity: 0;
+  transition: opacity var(--dur-fast) var(--ease);
+}
+
+.image-cell:hover > .row,
+.image-cell:focus-within > .row {
+  opacity: 1;
+}
+
+.image-cell > .row button.icon {
+  background: var(--surface);
+}
+
+/* Provenance covers the picture rather than squashing it: the cell is a fixed
+   square, and a panel of a dozen lines inside it would leave the image a
+   sliver. */
+.image-cell > .detail-panel {
+  position: absolute;
+  inset: 0;
+  overflow: auto;
+  background: var(--surface);
+}
+
+.image-blank {
+  margin: auto;
+  max-width: 52ch;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-8);
+  color: var(--fg-2);
+}
+
+/* The image being continued from, shown in the composer the way an attached
+   file is. */
+.attachment-thumb {
+  width: 20px;
+  height: 20px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  flex: 0 0 auto;
+}
+
+/* --- region selector ------------------------------------------------------ */
+.modal-card.image-mask {
+  width: min(880px, 92vw);
+}
+
+/* The canvas is the image's own pixel size and is stretched over the picture,
+   so a stroke lands where it was drawn whatever the pane is scaled to. */
+.image-mask-stage {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-lg);
+  background: var(--surface-sunken);
+  overflow: hidden;
+}
+
+.image-mask-stage img {
+  display: block;
+  max-width: 100%;
+  max-height: 56vh;
+  width: auto;
+  user-select: none;
+}
+
+.image-mask-stage canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  cursor: crosshair;
+  touch-action: none;
+}
+
+.image-mask-tools {
+  align-items: center;
+  gap: var(--s-8);
+  flex-wrap: wrap;
+}

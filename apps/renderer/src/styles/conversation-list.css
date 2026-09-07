@@ -1,0 +1,258 @@
+/* --- conversation list --------------------------------------------------- */
+
+/**
+ * The user's own work: conversations, council runs, data-agent threads and
+ * scheduled runs.
+ *
+ * It used to sit in the rail, in rows identical to the ones above it that led
+ * somewhere. A destination and a conversation looked the same, so the reader
+ * had to already know the app to tell them apart. Now the rail is only places
+ * and this is only things, and the two are drawn differently on purpose: a
+ * round glyph, a heavier title, a count beside each heading.
+ *
+ * The same markup renders on Home and in the History flyout. It reuses the
+ * rail's row so the rename and arm-to-delete behaviour stays in one place; the
+ * rules below restyle that row rather than replacing it.
+ */
+.conversation-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-8);
+  min-width: 0;
+}
+
+.conversation-search {
+  display: flex;
+  align-items: center;
+  gap: var(--s-8);
+  padding: 0 var(--s-8);
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--fg-muted);
+  transition: border-color var(--dur-fast) var(--ease);
+}
+
+.conversation-search:focus-within {
+  border-color: var(--accent);
+}
+
+/* The box is the control, so the input inside it carries no border of its own
+   and no focus ring. Two rings around one field reads as two fields. */
+.conversation-search input {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: none;
+  background: none;
+  padding: var(--s-8) 0;
+  font: var(--t-dense);
+  color: var(--fg);
+}
+
+.conversation-search input:focus,
+.conversation-search input:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+.conversation-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+/* The heading carries its count. "Conversations 12" answers, without scrolling,
+   the question the heading alone provokes. */
+.conversation-heading {
+  display: flex;
+  align-items: center;
+  gap: var(--s-8);
+  padding: var(--s-8) var(--s-8) var(--s-4);
+  font: var(--t-meta);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted-foreground);
+}
+
+.conversation-heading .count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: var(--radius-circular);
+  background: color-mix(in srgb, var(--fg) 8%, transparent);
+  color: var(--fg-muted);
+  font: var(--t-meta);
+  letter-spacing: 0;
+}
+
+.conversation-empty {
+  margin: 0;
+  padding: var(--s-8);
+  color: var(--fg-muted);
+  font: var(--t-caption);
+}
+
+/* --- rows ---------------------------------------------------------------- */
+
+.conversation-list .rail-row {
+  border-radius: var(--radius-md);
+}
+
+.conversation-list .rail-item {
+  grid-template-columns: 32px 1fr;
+  column-gap: var(--s-12);
+  padding: var(--s-8);
+  color: var(--fg);
+}
+
+/* A round glyph, because these rows are people-shaped things — a thread you
+   had, a run you started — and the square rail glyph is what a destination
+   looks like. One look tells you which list you are in.
+
+   The fill is mixed from the foreground rather than taken from a surface
+   token: this list is drawn on Home's card and on the flyout's sidebar, and
+   `--surface-alt` *is* the sidebar, so a token would have made the circle
+   invisible in one of the two places. */
+.conversation-list .rail-item .glyph {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-circular);
+  background: color-mix(in srgb, var(--fg) 8%, transparent);
+  color: var(--fg-muted);
+  transition:
+    background var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease);
+}
+
+/* Titles truncate here rather than wrap. A rail destination wraps because its
+   name is fixed and has to be read in full; a conversation title is whatever
+   the first message was, and wrapping it turns a list into a wall. */
+.conversation-list .rail-item .label {
+  font: var(--t-dense);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  overflow-wrap: normal;
+}
+
+.conversation-list .rail-item.active {
+  background: var(--surface-selected);
+}
+
+.conversation-list .rail-item.active .glyph {
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  color: var(--accent);
+}
+
+/* --- history flyout ------------------------------------------------------ */
+
+/**
+ * History, over the work rather than beside it.
+ *
+ * Moving the list out of the rail would have made every resume a trip through
+ * Home, so it is reachable from wherever you are. It overlays: the panes keep
+ * their measured widths, and nothing reflows when it opens or closes.
+ *
+ * There is no scrim over the window. The rail and the work stay clickable
+ * while it is open, and a row can be double-clicked to rename it — a panel
+ * that closes on the first click makes that impossible. It goes away on the
+ * close button, on Escape, or on the History control that opened it.
+ *
+ * `left` follows the rail because the shell sets `rail-icons` when the rail is
+ * narrow. That is a class rather than a `:has()` selector so the two widths
+ * stay a fact the app states, not one the stylesheet infers.
+ */
+.history-flyout {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 248px;
+  z-index: 6;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-8);
+  padding: var(--s-8);
+  background: var(--sidebar);
+  border-right: 1px solid var(--sidebar-border);
+  box-shadow: var(--shadow-16);
+}
+
+.shell.rail-icons .history-flyout {
+  left: 56px;
+}
+
+.history-flyout-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-8);
+  padding: var(--s-4) var(--s-4) var(--s-4) var(--s-8);
+  flex: 0 0 auto;
+}
+
+.history-flyout-head strong {
+  font: var(--t-subtitle);
+}
+
+/* The close button is always visible. The row actions fade in on hover because
+   they act on one row; this one closes the panel, and a dismissal you have to
+   hunt for is not a dismissal. */
+.history-flyout-head .rail-action {
+  opacity: 1;
+}
+
+.history-flyout .conversation-list {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* The search box stays put while the list moves under it. */
+.history-flyout .conversation-search {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+/* --- on Home ------------------------------------------------------------- */
+
+/**
+ * Resuming is a starting point, so it is on the page that lists starting
+ * points, under the ones that start something new.
+ *
+ * Left-aligned against a centred page on purpose: everything above it is one
+ * thing being announced, and this is a list being scanned.
+ */
+.home-history {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-8);
+  padding-top: var(--s-16);
+  border-top: 1px solid var(--stroke);
+}
+
+.home-history h2 {
+  margin: 0;
+  padding: 0 var(--s-8);
+  font: var(--t-subtitle);
+}
+
+/* Two columns of rows rather than one long one. Home is 720px wide and a
+   conversation title does not need all of it, so a single column left half the
+   page empty and pushed the page below the fold twice as fast. */
+.home-history .conversation-group {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 2px var(--s-16);
+}
+
+.home-history .conversation-heading {
+  grid-column: 1 / -1;
+}

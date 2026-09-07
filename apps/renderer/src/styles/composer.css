@@ -1,0 +1,345 @@
+/* --- conversation -------------------------------------------------------- */
+
+.messages {
+  flex: 1;
+  overflow: auto;
+  min-width: 0;
+  min-height: 0;
+  padding: var(--s-16);
+}
+
+/* --- composer ------------------------------------------------------------
+
+   Shaped after the VS Code chat input: one bordered box holding everything
+   that goes into the turn — attachment chips, the text, and a flat toolbar
+   along the bottom — with a thin status strip underneath it.
+
+   The border is the boundary, and it is doing work. Inside it is what this
+   message will be: the words, the files, the model that answers. Outside it
+   is what the message will be run *under*: where the loop runs and what it
+   will stop to ask. Those change at different rates and a reader looks for
+   them at different moments.
+
+   Controls inside the box are borderless on purpose. Five outlined widgets in
+   a row read as five things to decide before you can type, and only one of
+   them — the text — usually is. */
+.composer {
+  border-top: 1px solid var(--stroke);
+  padding: var(--s-8) var(--s-12) var(--s-12);
+  background: var(--surface-alt);
+}
+
+.composer-box {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  overflow: hidden;
+  transition: border-color var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease);
+}
+
+/* One pixel of border colour, and nothing else. `--primary` is near-black in
+   the light theme, so the change from `--stroke-strong` is plain on its own;
+   the inset ring this used to add on top of it made a 2px black frame around
+   the largest thing in the pane. */
+.composer-box:focus-within {
+  border-color: var(--primary);
+}
+
+/* Attached files, above the text. A chip is a view of a `file:` line in the
+   draft — there is no second list — so one wraps in and out as the line is
+   typed or deleted. */
+.composer-attachments {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-4);
+  padding: var(--s-8) var(--s-8) 0;
+}
+
+.attachment-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-4);
+  max-width: 100%;
+  min-width: 0;
+  padding: 1px 2px 1px var(--s-8);
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-sm);
+  background: var(--surface-sunken);
+  font: var(--t-caption);
+  color: var(--fg-2);
+}
+
+.attachment-chip > svg {
+  flex: 0 0 auto;
+  color: var(--fg-muted);
+}
+
+/* The name is what identifies the file, so it is the last thing to be cut.
+   The folder is context and gives way first. */
+.attachment-name {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.attachment-dir {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--fg-muted);
+}
+
+.attachment-chip button.icon {
+  padding: 2px;
+  border-color: transparent;
+  background: none;
+  color: var(--fg-muted);
+  border-radius: var(--radius-sm);
+}
+
+.attachment-chip button.icon:hover:not(:disabled) {
+  background: var(--surface-hover);
+  color: var(--fg);
+}
+
+.composer-box textarea {
+  border: none;
+  border-radius: 0;
+  resize: none;
+  min-height: 56px;
+  max-height: 40vh;
+  padding: var(--s-8) var(--s-12);
+  background: transparent;
+}
+
+/* The shared focus rule thickens the bottom border and takes a pixel of
+   padding back. Inside the box the border belongs to the box. */
+.composer-box textarea:focus {
+  border: none;
+  padding-bottom: var(--s-8);
+}
+
+.composer-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-8);
+  padding: 0 var(--s-4) var(--s-4);
+  background: transparent;
+}
+
+.composer-pickers {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* A picker that reads as a label until you reach for it. Shrinkable, so a long
+   model name narrows it rather than pushing Send off the row. */
+select.composer-picker {
+  width: auto;
+  min-width: 0;
+  max-width: 200px;
+  flex: 0 1 auto;
+  border: none;
+  background: none;
+  color: var(--fg-2);
+  font: var(--t-caption);
+  padding: 3px var(--s-4);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+select.composer-picker:hover {
+  background: var(--surface-hover);
+  color: var(--fg);
+}
+
+select.composer-picker:focus {
+  border: none;
+  padding-bottom: 3px;
+  outline: 1px solid var(--primary);
+  outline-offset: -1px;
+}
+
+button.composer-tool {
+  padding: var(--s-4);
+  border-color: transparent;
+  background: none;
+  color: var(--fg-2);
+  font: var(--t-caption);
+  gap: var(--s-4);
+  border-radius: var(--radius-sm);
+  flex: 0 0 auto;
+}
+
+button.composer-tool:hover:not(:disabled) {
+  background: var(--surface-hover);
+  color: var(--fg);
+}
+
+button.composer-tool.danger {
+  color: var(--danger);
+}
+
+.composer-submit {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  flex: 0 0 auto;
+}
+
+/* Send is the one accented thing in the box, and it goes flat the moment there
+   is nothing to send — the shared disabled rule already greys it, this only
+   drops the lift so it stops looking pressable. */
+button.composer-send {
+  padding: var(--s-4);
+  line-height: 0;
+  border-radius: var(--radius-sm);
+  box-shadow: none;
+}
+
+.composer-status {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--s-4);
+  padding: var(--s-4) var(--s-4) 0;
+  font: var(--t-caption);
+  color: var(--fg-muted);
+}
+
+.composer-status-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-4);
+}
+
+.composer-status-divider {
+  width: 1px;
+  height: 12px;
+  background: var(--stroke-strong);
+  margin: 0 var(--s-2);
+}
+
+/* --- the small composer --------------------------------------------------
+
+   One line and a Send, for the two transcripts that live inside a card rather
+   than owning a pane: My IQ's chat and the Connectome IQ console. Neither can
+   take a model picker, an attachment tray or a status strip, and neither
+   should grow its own — the two of them had drifted into two different input
+   rows for the same job.
+
+   It borrows the box from `.composer-box` rather than inheriting it, because
+   the shape is what a reader recognises: one bordered field, the border going
+   accent on focus, the accent action inside it. */
+.mini-composer {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  flex: 0 0 auto;
+  padding: var(--s-4);
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  transition: border-color var(--dur-fast) var(--ease);
+}
+
+.mini-composer:focus-within {
+  border-color: var(--primary);
+}
+
+.mini-composer input {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  padding: var(--s-4) var(--s-8);
+}
+
+/* The shared focus rule thickens the bottom border and takes a pixel of
+   padding back. Inside the box the border belongs to the box. */
+.mini-composer input:focus {
+  border: none;
+  padding-bottom: var(--s-4);
+}
+
+.mini-composer button {
+  flex: 0 0 auto;
+  border-radius: var(--radius-md);
+  box-shadow: none;
+}
+
+.msg {
+  margin-bottom: var(--s-16);
+  max-width: 76ch;
+  overflow-wrap: anywhere;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.msg .who {
+  font: var(--t-caption);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--fg-muted);
+  margin-bottom: var(--s-4);
+  display: flex;
+  align-items: center;
+  /* `--s-6` is not in the spacing ramp, so this declaration was void and the
+     badge sat flush against the name. */
+  gap: var(--s-8);
+}
+
+/*
+ * The speaker badge.
+ *
+ * A transcript is scanned, not read: the eye needs one fixed mark per role at
+ * the same x-position on every message so a glance down the column separates
+ * the two voices before any text is parsed. Colour alone would not do it —
+ * the label is small, muted and uppercase by design.
+ */
+.msg .who .avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+}
+
+.msg.from-user .who .avatar {
+  background: var(--primary);
+  color: var(--primary-fg);
+}
+
+/*
+ * Filled for the user, outlined for the agent. The palette is monochrome by
+ * design, so the two badges cannot be told apart by hue — they are told apart
+ * by weight, which survives greyscale, dark theme and colour blindness alike.
+ */
+.msg.from-agent .who .avatar {
+  background: var(--surface);
+  color: var(--fg-2);
+  border: 1px solid var(--stroke-strong);
+}
+
+/* Message bubbles read from role tokens, so re-theming a bubble is one line.
+   Flat: a transcript is a column of dozens of them, and a shadow under each
+   one turns reading into looking at a stack of paper. */
+.msg .bubble {
+  white-space: pre-wrap;
+  padding: var(--s-8) var(--s-12);
+}

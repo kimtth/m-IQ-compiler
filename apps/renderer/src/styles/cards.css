@@ -1,0 +1,427 @@
+/* --- cards, tables and status -------------------------------------------- */
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-lg);
+  padding: var(--s-12) var(--s-16);
+  margin-bottom: var(--s-12);
+  /* Flat. A card sits *on* a pane, not above it: the hairline already says
+     where it ends, and a drop shadow under every one of a dozen stacked cards
+     turns a list into a pile. Shadow is kept for things that genuinely float
+     — menus, modals, the toast. */
+}
+
+.card.approval {
+  border-color: color-mix(in srgb, var(--warning) 45%, var(--stroke));
+  background: var(--warning-tint);
+}
+
+/* The line that says what cannot be taken back. Sits between the request and
+   the buttons, because a warning printed under the control it warns about is
+   read after the click. */
+.approval-note {
+  margin: var(--s-8) 0 0;
+  color: var(--fg-2);
+  font: var(--t-caption);
+  font-style: italic;
+  line-height: 1.5;
+}
+
+.approval-meta {
+  margin: var(--s-8) 0 var(--s-12);
+}
+
+/* Allow and its chevron, welded into one control: the narrow answer is under
+   the cursor and the standing answers are one click further away. */
+.approval-split {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+}
+
+.approval-split > button.primary:first-child {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.approval-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  padding: 0;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  /* A hairline so the two halves read as one control with two targets rather
+     than as one wide button that does one thing. Mixed from the button's own
+     foreground, so it holds in both themes without a second hard-coded value. */
+  border-left: 1px solid color-mix(in srgb, var(--primary-fg) 24%, transparent);
+}
+
+/* Anchored to the split button, and wide enough for the consequence lines —
+   the labels alone do not say how long either answer lasts. */
+.approval-menu {
+  position: absolute;
+  z-index: 60;
+  top: calc(100% + 4px);
+  left: 0;
+  width: max-content;
+  max-width: 340px;
+  padding: var(--s-4);
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-16);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.approval-menu button {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+  background: none;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 6px var(--s-8);
+  color: var(--fg-2);
+  text-align: left;
+}
+
+.approval-menu button:hover:not(:disabled) {
+  background: var(--surface-hover);
+  color: var(--fg-1);
+}
+
+.approval-menu button.bad:hover:not(:disabled) {
+  color: var(--danger);
+}
+
+/* Disabled rather than hidden: the item that cannot be chosen is the one that
+   teaches the rule, and its detail line is where the reason is. */
+.approval-menu button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.approval-menu .label {
+  font: var(--t-dense);
+  font-weight: 600;
+}
+
+.approval-menu .detail {
+  font: var(--t-caption);
+  color: var(--fg-muted);
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.menu-sep {
+  height: 1px;
+  margin: var(--s-4) 0;
+  background: var(--border);
+}
+
+.card.nested {
+  background: var(--surface-alt);
+  margin-top: var(--s-12);
+}
+
+.card h3 {
+  margin: 0 0 var(--s-4);
+  font: var(--t-body-lg);
+  font-weight: 600;
+}
+
+.row {
+  display: flex;
+  gap: var(--s-8);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.row.between {
+  justify-content: space-between;
+  flex-wrap: nowrap;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-12);
+}
+
+.hint {
+  margin: var(--s-8) 0 0;
+  color: var(--fg-muted);
+  font: var(--t-caption);
+  line-height: 1.5;
+}
+
+.mono {
+  font-family: var(--font-mono);
+}
+
+.grid {
+  display: grid;
+  gap: var(--s-12);
+}
+
+.muted {
+  color: var(--fg-muted);
+  font: var(--t-caption);
+}
+
+/* Status chips read from role tokens and always pair a colour with text.
+
+   Borderless. A chip is small, tinted and coloured already; outlining it too
+   spends three signals on one word, and a row of six of them — which is what
+   a Fabric workspace listing is — turns into a strip of little boxes competing
+   with the names beside them. */
+.pill {
+  font: var(--t-caption);
+  padding: 1px var(--s-8);
+  border-radius: var(--radius-circular);
+  border: 1px solid transparent;
+  background: var(--chip-bg);
+  color: var(--chip-fg);
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-4);
+}
+
+.pill.ok {
+  color: var(--success);
+  background: var(--success-tint);
+}
+
+.pill.bad {
+  color: var(--danger);
+  background: var(--danger-tint);
+}
+
+.pill.warn {
+  color: var(--warning);
+  background: var(--warning-tint);
+}
+
+/* Long advertised catalogues (Copilot models) render as dense single-line rows
+   rather than stacked cards, so the section stays scannable at ~20 entries. */
+.dense-list {
+  list-style: none;
+  margin: var(--s-8) 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.dense-list > li + li {
+  border-top: 1px solid var(--stroke);
+}
+
+button.dense-row {
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--s-8);
+  padding: var(--s-4) var(--s-8);
+  background: none;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  text-align: left;
+  cursor: pointer;
+}
+
+button.dense-row:hover {
+  background: var(--surface-hover, var(--bg-2));
+}
+
+/* The open row in a dense list carries a bar on its leading edge, which reads
+   at a glance without moving anything. */
+button.dense-row[aria-current="true"] {
+  background: var(--surface-hover);
+  box-shadow: inset 2px 0 0 var(--primary);
+}
+
+/* Inside a card the list keeps its row rules and loses its own outline. A
+   bordered list in a bordered card puts two lines a few pixels apart, and the
+   eye cannot tell which edge belongs to what. The card is the box; the list is
+   its contents. */
+.card > .dense-list {
+  border: none;
+  border-radius: 0;
+  margin-left: calc(var(--s-16) * -1);
+  margin-right: calc(var(--s-16) * -1);
+}
+
+.card > .dense-list > li + li {
+  border-top: 1px solid var(--stroke);
+}
+
+.card > .dense-list button.dense-row {
+  padding-left: var(--s-16);
+  padding-right: var(--s-16);
+}
+
+.dense-name {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dense-meta {
+  flex: 1 1 auto;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Consent notices and generated prose: preformatted, readable width. */
+.notice {
+  margin: 0;
+  padding: var(--s-12);
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-lg);
+  background: var(--surface-alt);
+  font: 13px/1.5 var(--font);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.transcript {
+  max-height: 320px;
+  overflow: auto;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.transcript .who {
+  color: var(--fg-muted);
+  font: var(--t-caption);
+}
+
+/* A recording in progress must be obvious, so the indicator pulses. */
+.pill.recording {
+  color: var(--danger);
+  border-color: var(--danger);
+  background: var(--danger-tint);
+  animation: pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.45;
+  }
+}
+
+/*
+ * The recorder bar.
+ *
+ * Fixed at the top of the Record tab and present in every state, because the
+ * control that starts a recording and the control that stops it are the same
+ * control — and a user who cannot find it cannot tell "not available" from
+ * "not built". Sticky so that scrolling through past meetings never takes the
+ * stop button off screen mid-recording.
+ */
+.recorder-bar {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: var(--s-12);
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-2);
+  padding: var(--s-8) var(--s-12);
+  margin-bottom: var(--s-12);
+}
+
+.recorder-bar .state-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex: none;
+  background: var(--fg-muted);
+}
+
+.recorder-bar.recording .state-dot {
+  background: var(--danger);
+  box-shadow: 0 0 0 5px var(--danger-tint);
+}
+
+.recorder-bar.starting .state-dot,
+.recorder-bar.saving .state-dot {
+  background: var(--warning, #d99a18);
+}
+
+.recorder-state {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.recorder-state .mono {
+  font-variant-numeric: tabular-nums;
+  color: var(--fg-muted);
+  font: var(--t-caption);
+}
+
+/* Square, not pill-shaped: this is a transport control, not a form action. */
+.recorder-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  flex: none;
+  border-radius: var(--radius-md);
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--primary-foreground, #fff);
+}
+
+.recorder-toggle.stop {
+  background: var(--danger);
+  border-color: var(--danger);
+}
+
+.recorder-toggle:disabled {
+  opacity: 0.45;
+}
+
+.error {
+  color: var(--danger);
+  background: var(--danger-tint);
+  border-bottom: 1px solid var(--stroke);
+  padding: var(--s-8) var(--s-16);
+  font-size: 13px;
+}
+
+.tool-grant {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-8);
+  padding: var(--s-4) 0;
+  font: var(--t-body);
+  cursor: pointer;
+}
+
+.tool-grant input {
+  margin-top: 3px;
+  flex: 0 0 auto;
+  width: auto;
+}

@@ -1,0 +1,106 @@
+{
+  "kind": "iq.flow",
+  "version": 1,
+  "flow": {
+    "id": "flow_e2e_upgrades",
+    "name": "Dependency upgrade chase",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "Weekly platform review",
+        "config": { "trigger": "Every Monday, before the team stand-up" },
+        "notes": ""
+      },
+      {
+        "id": "n2",
+        "kind": "step",
+        "label": "Platform lead lists overdue upgrades",
+        "config": {
+          "owner": "Platform lead",
+          "system": "Dependency dashboard",
+          "duration": "30 minutes"
+        },
+        "notes": "The advisory feed and the pull request queue both carry a date, so neither alone is enough."
+      },
+      {
+        "id": "n3",
+        "kind": "data",
+        "label": "Dependency inventory",
+        "config": { "format": "Spreadsheet", "system": "Service catalogue" },
+        "notes": "Vendor code to package name, so a chase names the package rather than an advisory ID."
+      },
+      {
+        "id": "n4",
+        "kind": "step",
+        "label": "Security ranks each package by release risk",
+        "config": {
+          "owner": "Security engineer",
+          "system": "Release plan",
+          "duration": "1 hour"
+        },
+        "notes": ""
+      },
+      {
+        "id": "n5",
+        "kind": "data",
+        "label": "Open upgrade list",
+        "config": { "format": "Spreadsheet", "system": "Team share" },
+        "notes": ""
+      },
+      {
+        "id": "n6",
+        "kind": "decision",
+        "label": "Anything on the critical path?",
+        "config": {
+          "question": "Does an overdue package block a release?",
+          "criteria": "The package is on the critical path for a freeze in the next six weeks"
+        },
+        "notes": ""
+      },
+      {
+        "id": "n7",
+        "kind": "subflow",
+        "label": "Vendor escalation",
+        "config": { "flow": "Vendor escalation and recovery plan" },
+        "notes": "Escalation is its own process with its own approvals."
+      },
+      {
+        "id": "n8",
+        "kind": "end",
+        "label": "Escalated to the vendor",
+        "config": { "outcome": "A recovery plan is owed within five working days" },
+        "notes": ""
+      },
+      {
+        "id": "n9",
+        "kind": "end",
+        "label": "Chased and tracked",
+        "config": { "outcome": "The list stands until next week's review" },
+        "notes": ""
+      }
+    ],
+    "edges": [
+      { "id": "e1", "from": "n1", "to": "n2", "label": "", "style": "solid" },
+      { "id": "e2", "from": "n2", "to": "n3", "label": "", "style": "solid" },
+      { "id": "e3", "from": "n3", "to": "n4", "label": "", "style": "solid" },
+      { "id": "e4", "from": "n4", "to": "n5", "label": "", "style": "solid" },
+      { "id": "e5", "from": "n5", "to": "n6", "label": "", "style": "solid" },
+      { "id": "e6", "from": "n6", "to": "n7", "label": "Yes", "style": "solid" },
+      { "id": "e7", "from": "n6", "to": "n9", "label": "No", "style": "solid" },
+      { "id": "e8", "from": "n7", "to": "n8", "label": "", "style": "solid" }
+    ]
+  },
+  "layout": {
+    "n1": { "x": 120, "y": 60 },
+    "n2": { "x": 120, "y": 204 },
+    "n3": { "x": 120, "y": 348 },
+    "n4": { "x": 120, "y": 492 },
+    "n5": { "x": 120, "y": 636 },
+    "n6": { "x": 120, "y": 780 },
+    "n7": { "x": 120, "y": 960 },
+    "n8": { "x": 120, "y": 1104 },
+    "n9": { "x": 380, "y": 960 }
+  },
+  "description": "# Dependency upgrade chase\n\nA weekly review of dependency upgrades that are past their due date, ranked by how much each one threatens the release.\n\nNothing here runs. It is a picture of how the chase works, so the people doing it agree on the same one.\n"
+}

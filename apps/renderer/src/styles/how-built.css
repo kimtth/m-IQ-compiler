@@ -1,0 +1,144 @@
+/* -- "How this is built" ------------------------------------------------- */
+
+.card.how > summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--fg);
+}
+
+.how-steps {
+  margin: var(--s-8) 0 var(--s-8);
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  font: var(--t-caption);
+  color: var(--fg-2);
+}
+
+.how-steps code {
+  font-family: var(--font-mono);
+}
+
+.field.slider .how-line {
+  display: block;
+  font-size: 10px;
+  line-height: 1.4;
+  color: var(--fg-muted);
+}
+
+.evidence li {
+  display: flex;
+  flex-direction: column;
+}
+
+.bundle-row {
+  display: flex;
+  align-items: center;
+  gap: var(--s-8);
+  font: var(--t-caption);
+  padding: 2px 0;
+}
+
+.swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: var(--radius-circular);
+  flex: 0 0 auto;
+}
+
+.finding {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--s-8) 0;
+  border-bottom: 1px solid var(--stroke);
+  font: var(--t-caption);
+}
+
+.finding .tag {
+  align-self: flex-start;
+  text-transform: uppercase;
+  font-size: 9px;
+  letter-spacing: 0.04em;
+  padding: 0 5px;
+  border-radius: var(--radius-circular);
+  border: 1px solid var(--stroke);
+  color: var(--fg-muted);
+}
+
+.finding .tag.fragility,
+.finding .tag.permission_concentration {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.finding .tag.redundancy,
+.finding .tag.cost_concentration,
+.finding .tag.stale_pin {
+  border-color: var(--warning);
+  color: var(--warning);
+}
+
+.finding .action {
+  color: var(--fg-2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flow-node,
+  .wire,
+  .palette-item {
+    transition: none;
+  }
+}
+
+/* n8n-style canvas controls: viewport only, docked bottom-left so they never
+   sit over the node a user is placing. */
+.canvas-controls {
+  position: absolute;
+  left: var(--s-12);
+  bottom: var(--s-12);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  backdrop-filter: blur(6px);
+  box-shadow: var(--shadow-4);
+}
+
+.canvas-controls .icon {
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: var(--radius-md);
+  background: none;
+  color: var(--fg-2);
+  cursor: pointer;
+}
+
+.canvas-controls .icon:hover {
+  background: var(--surface-hover);
+  color: var(--fg);
+}
+
+.canvas-controls .zoom-read {
+  padding: 0 var(--s-8);
+  font: var(--t-caption);
+  font-family: var(--font-mono);
+  color: var(--fg-muted);
+  min-width: 46px;
+  text-align: right;
+}
+
+/* Flow owns the whole window: it is a builder, not a thread, so the canvas
+   pane is the only pane and its editor fills it. */
+.pane.canvas > .flow,
+.pane.canvas > .connectome {
+  flex: 1 1 auto;
+}

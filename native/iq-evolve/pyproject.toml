@@ -1,0 +1,26 @@
+[project]
+name = "iq-evolve"
+version = "0.1.0"
+description = "GEPA skill-evolution sidecar for IQ Compiler, built on DSPy."
+requires-python = ">=3.13"
+dependencies = [
+    # GEPA ships inside DSPy as `dspy.GEPA`, backed by the `gepa` package.
+    # Pinned at or above 3.3 because the constructor changed: earlier releases
+    # took different budget arguments, and the reference implementation this
+    # was modelled on still calls the old one.
+    "dspy>=3.3.0",
+    # The model is GitHub Copilot, driven through the Copilot CLI, so the app's
+    # existing credential is the only one involved — no API key to store and
+    # nothing to expire separately. Same dependency the research sidecar uses.
+    "agent-framework-github-copilot>=1.0.1",
+]
+
+[project.scripts]
+iq-evolve = "iq_evolve.__main__:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["iq_evolve"]

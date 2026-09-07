@@ -1,0 +1,143 @@
+.flow-drawer {
+  border-top: 1px solid var(--stroke);
+  background: var(--bg-1);
+  flex: 0 0 auto;
+  max-height: 38%;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.flow-drawer .tabs {
+  display: flex;
+  gap: var(--s-4);
+  padding: var(--s-4) var(--s-8);
+  border-bottom: 1px solid var(--stroke);
+}
+
+.flow-drawer .tabs button {
+  border: none;
+  background: none;
+  padding: var(--s-4) var(--s-8);
+  border-radius: var(--radius-md);
+  color: var(--fg-muted);
+  font: var(--t-caption);
+  cursor: pointer;
+}
+
+.flow-drawer .tabs button.active {
+  background: var(--surface-selected);
+  color: var(--fg);
+}
+
+.drawer-body {
+  overflow: auto;
+  padding: var(--s-12);
+  min-height: 0;
+}
+
+.diag {
+  display: flex;
+  gap: var(--s-8);
+  padding: var(--s-4) 0;
+  font: var(--t-caption);
+  border-bottom: 1px solid var(--stroke);
+}
+
+.diag.error { color: var(--danger); }
+.diag.warning { color: var(--warning); }
+
+.contract {
+  white-space: pre-wrap;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--fg-2);
+  margin: 0;
+}
+
+.contract-pane {
+  display: grid;
+  gap: var(--s-12);
+}
+
+/* The sample picker reads as one more header control, not a form field. */
+.field.sample {
+  display: inline-flex;
+  align-items: center;
+}
+
+.field.sample select {
+  height: 28px;
+  padding: 0 var(--s-8);
+  border: 1px solid var(--stroke);
+  border-radius: var(--r-8);
+  background: var(--bg-1);
+  color: var(--fg-2);
+  font: var(--t-caption);
+  cursor: pointer;
+}
+
+.field.sample select:hover {
+  border-color: var(--stroke-strong);
+  color: var(--fg-1);
+}
+
+/* "Describe your process". A single line, wide enough for a sentence, sitting
+   with the other header controls rather than in a panel of its own — typing a
+   sentence is one of the ways a diagram starts, not a separate mode. */
+.field.describe {
+  flex: 1 1 240px;
+  min-width: 160px;
+  max-width: 420px;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--s-8);
+  height: 28px;
+  padding: 0 var(--s-8);
+  border: 1px solid var(--stroke);
+  border-radius: var(--r-8);
+  background: var(--bg-1);
+  color: var(--fg-muted);
+}
+
+.field.describe input {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: none;
+  background: none;
+  color: var(--fg);
+  font: var(--t-caption);
+}
+
+.field.describe input:focus {
+  outline: none;
+}
+
+.flow-notice,
+.flow-empty {
+  font: var(--t-caption);
+  color: var(--fg-muted);
+  padding: var(--s-8) var(--s-12);
+}
+
+.flow-empty {
+  position: absolute;
+  left: 50%;
+  top: 40%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  max-width: 340px;
+  text-align: center;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.flow-notice {
+  border-bottom: 1px solid var(--stroke);
+  background: var(--surface-alt);
+  color: var(--fg-2);
+  cursor: pointer;
+  flex: 0 0 auto;
+}

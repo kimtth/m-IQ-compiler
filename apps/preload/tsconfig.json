@@ -1,0 +1,21 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    // Vite emits the shipped bundle into dist/. tsc runs only for type
+    // checking, so its output goes somewhere it cannot be mistaken for it.
+    "outDir": "types",
+    "rootDir": "src",
+    "tsBuildInfoFile": "types/.tsbuildinfo",
+    // `preserve` rather than `CommonJS`: nothing here is emitted for execution,
+    // so the module system that matters is the bundler's, and Vite is told the
+    // output format in vite.config.ts. Paired with `bundler` resolution, which
+    // replaces the node10 resolution TypeScript has deprecated. Both are stated
+    // rather than inferred, because the base config sets Node16 and an implied
+    // default cannot override an explicit inherited one.
+    "module": "Preserve",
+    "moduleResolution": "Bundler",
+    "types": ["node"]
+  },
+  "include": ["src/**/*.ts"],
+  "references": [{ "path": "../../packages/shared" }]
+}

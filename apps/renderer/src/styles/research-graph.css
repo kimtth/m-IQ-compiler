@@ -1,0 +1,215 @@
+/* --- research reasoning graph -------------------------------------------- *
+ * The Agent Framework workflow's own account of a run: its executors, the edges
+ * it validated, and the status events it raised. The pane height is set from
+ * the component, because it has to grow with the widest fan-out — sixteen
+ * questions in a fixed box is a bar of touching discs. This is the floor. */
+.research-graph {
+  margin-top: var(--s-12);
+  padding: var(--s-12);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+}
+
+.research-history h3 {
+  margin-bottom: var(--s-2);
+}
+
+.research-history .muted {
+  margin: 0 0 var(--s-12);
+}
+
+.research-graph-canvas {
+  width: 100%;
+  min-height: 340px;
+  margin-top: var(--s-8);
+}
+
+/* Kind owns the hue. Every colour on this surface comes from here, so a theme
+   change is a cascade rather than a repaint — which is the whole reason the
+   nodes are DOM and not a canvas. */
+.rg-node[data-kind="plan"],
+.rg-key-dot[data-kind="plan"] {
+  --rg-hue: var(--research-graph-plan);
+}
+
+.rg-node[data-kind="research"],
+.rg-key-dot[data-kind="research"] {
+  --rg-hue: var(--research-graph-research);
+}
+
+.rg-node[data-kind="question"],
+.rg-key-dot[data-kind="question"] {
+  --rg-hue: var(--research-graph-question);
+}
+
+.rg-node[data-kind="reflect"],
+.rg-key-dot[data-kind="reflect"] {
+  --rg-hue: var(--research-graph-reflect);
+}
+
+.rg-node[data-kind="synthesize"],
+.rg-key-dot[data-kind="synthesize"] {
+  --rg-hue: var(--research-graph-synthesize);
+}
+
+.rg-node {
+  position: relative;
+  width: var(--rg-size);
+  height: var(--rg-size);
+  /* Nodes can be dragged. Say so before the reader has to guess. */
+  cursor: grab;
+}
+
+.rg-node:active {
+  cursor: grabbing;
+}
+
+/* The attachment points, not a control. Nothing here is connectable, so they
+   sit on the node's centre and are never seen: an edge that met the node's
+   left edge would be drawn under the disc anyway. */
+.rg-node .react-flow__handle {
+  opacity: 0;
+  pointer-events: none;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  min-width: 1px;
+  min-height: 1px;
+  width: 1px;
+  height: 1px;
+  border: 0;
+}
+
+.rg-dot {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: var(--rg-hue);
+  box-sizing: border-box;
+  /* A step turning from running to done should read as the same step changing,
+     not as a redraw. */
+  transition:
+    background 200ms ease,
+    box-shadow 200ms ease,
+    opacity 200ms ease;
+}
+
+/* Status is the treatment of the hue, so the two can be read independently. */
+.rg-node[data-status="pending"] .rg-dot {
+  opacity: 0.35;
+}
+
+.rg-node[data-status="running"] .rg-dot {
+  box-shadow: 0 0 0 3px var(--research-graph-running-ring);
+}
+
+.rg-node[data-status="skipped"] .rg-dot {
+  background: var(--research-graph-skipped);
+  opacity: 0.7;
+}
+
+/* The one exception. A run of sixteen questions with one failure has to show
+   that failure without being searched, and a border is not enough at question
+   size — so it takes the red fill outright and keeps its kind on the border. */
+.rg-node[data-status="failed"] .rg-dot {
+  background: var(--research-graph-failed);
+  border: 3px solid var(--rg-hue);
+}
+
+/* The label is written beside the node, and it is the widest thing on this
+   surface. `MIN_COL_GAP` in `ResearchGraph.tsx` keeps the ranks at least this
+   wide plus a node plus a gutter apart, so a label can never reach the next
+   column. Two lines rather than one: at 170px a research question is cut off
+   after four or five words, and "Which technical archite…" names nothing. */
+.rg-label {
+  position: absolute;
+  top: 50%;
+  left: calc(100% + 8px);
+  transform: translateY(-50%);
+  width: var(--rg-label-width, 170px);
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  font-size: 12px;
+  line-height: 1.3;
+  color: var(--research-graph-label);
+  pointer-events: none;
+}
+
+/* The last rank has the right-hand padding and nothing else, so its label is
+   written back over the graph rather than off the edge. */
+.rg-node[data-side="left"] .rg-label {
+  left: auto;
+  right: calc(100% + 8px);
+  text-align: right;
+}
+
+/* Solid, not faded. An edge is the claim that one step fed another, and a
+   hairline at three-quarter opacity on a white card is a claim nobody can
+   read. */
+.react-flow__edge.rg-edge .react-flow__edge-path {
+  stroke: var(--research-graph-link);
+  stroke-width: 1.6;
+}
+
+/* Zoom and refit. A graph of several rounds is wider than the pane, and the
+   fit will not shrink it past the point where the labels stop being readable,
+   so there has to be a way to see the rest. Drawn in the product's own colours
+   rather than the library's white-on-white default. */
+.research-graph-canvas .react-flow__controls {
+  box-shadow: var(--shadow-2);
+}
+
+.research-graph-canvas .react-flow__controls-button {
+  width: 22px;
+  height: 22px;
+  border-bottom: 1px solid var(--border);
+  background: var(--card);
+  fill: var(--fg-muted);
+}
+
+.research-graph-canvas .react-flow__controls-button:hover {
+  background: var(--surface-hover);
+  fill: var(--fg);
+}
+
+.research-graph-key {
+  gap: var(--s-12);
+  font: var(--t-caption);
+  flex-wrap: wrap;
+}
+
+.research-graph-key + .research-graph-key {
+  margin-top: var(--s-4);
+}
+
+/* The key is drawn by the same rules as the graph, so it cannot drift from it. */
+.rg-key-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: var(--s-4);
+  background: var(--rg-hue);
+  box-sizing: border-box;
+}
+
+.rg-key-dot[data-status="pending"] {
+  opacity: 0.35;
+}
+
+.rg-key-dot[data-status="running"] {
+  box-shadow: 0 0 0 2px var(--research-graph-running-ring);
+}
+
+.rg-key-dot[data-status="skipped"] {
+  background: var(--research-graph-skipped);
+}
+
+.rg-key-dot[data-status="failed"] {
+  background: var(--research-graph-failed);
+}

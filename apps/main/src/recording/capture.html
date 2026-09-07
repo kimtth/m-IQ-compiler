@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'none'; style-src 'unsafe-inline'"
+    />
+    <title>IQ Compiler screen capture</title>
+    <style>
+      body {
+        margin: 0;
+        background: #000;
+      }
+    </style>
+  </head>
+  <!--
+    The capture surface. It is never shown and never loads a script of its own:
+    everything happens in capture-preload.cjs, which has both the Web media APIs
+    and ipcRenderer. The page exists only because getUserMedia needs a document.
+  -->
+  <body></body>
+</html>

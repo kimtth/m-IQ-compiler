@@ -1,0 +1,174 @@
+/* --- sign-in gate -------------------------------------------------------- *
+ * Shown instead of the shell until BOTH required connections are green. It is
+ * a full-surface screen because there is nothing useful behind it yet. */
+.gate {
+  display: grid;
+  place-items: center;
+  height: 100vh;
+  background: var(--surface-sunken);
+  padding: var(--s-24);
+}
+
+.gate-card,
+.signin-card {
+  width: min(460px, 100%);
+  background: var(--surface);
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-xl);
+  padding: var(--s-32);
+  box-shadow: var(--shadow-16);
+}
+
+.gate-card h1,
+.signin-card h1 {
+  margin: 0 0 var(--s-8);
+  font: var(--t-subtitle);
+  text-align: center;
+}
+
+.signin-card .lede,
+.gate-card .lede {
+  color: var(--fg-muted);
+  text-align: center;
+  margin: 0 0 var(--s-20);
+  font: var(--t-body);
+}
+
+/* The buttons in this card are full-width, and a full-width button whose
+   label sits against its left edge reads as a misaligned row rather than as an
+   action. `button` is an inline-flex box, so centring is the one declaration
+   that was missing. */
+.gate-card button,
+.signin-card button {
+  justify-content: center;
+}
+
+/* One connection per row: a full-width primary button with a status dot and a
+   status line directly beneath it. Never colour alone — the line carries the
+   meaning too. */
+.connection-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  padding: var(--s-12) 0;
+  border-top: 1px solid var(--stroke);
+}
+
+.connection-row:last-of-type {
+  border-bottom: 1px solid var(--stroke);
+}
+
+.status-line {
+  display: flex;
+  align-items: center;
+  gap: var(--s-8);
+  font: var(--t-caption);
+  color: var(--fg-muted);
+}
+
+.status-dot {
+  flex: none;
+  width: 9px;
+  height: 9px;
+  border-radius: var(--radius-circular);
+  background: var(--fg-disabled);
+  box-shadow: 0 0 0 3px transparent;
+}
+
+.status-dot.ok {
+  background: var(--success);
+  box-shadow: 0 0 0 3px var(--success-tint);
+}
+
+.status-dot.warn {
+  background: var(--warning);
+  box-shadow: 0 0 0 3px var(--warning-tint);
+}
+
+.status-dot.bad {
+  background: var(--danger);
+  box-shadow: 0 0 0 3px var(--danger-tint);
+}
+
+/* Tenant field with an inline Edit affordance. */
+.field-row {
+  display: flex;
+  align-items: center;
+  gap: var(--s-8);
+  margin: var(--s-8) 0;
+}
+
+.field-row label {
+  flex: none;
+  color: var(--fg-muted);
+  font: var(--t-caption);
+}
+
+.field-row input {
+  flex: 1;
+}
+
+.gate-steps {
+  margin: var(--s-16) 0;
+  padding-left: var(--s-20);
+  color: var(--fg-2);
+  font: var(--t-body);
+  line-height: 1.7;
+}
+
+.gate-steps code,
+.field-row code {
+  font-family: var(--font-mono);
+  background: var(--code-bg);
+  border: 1px solid var(--code-border);
+  border-radius: var(--radius-sm);
+  padding: 0 var(--s-4);
+}
+
+/* --- stacked form: label over control over hint -------------------------- *
+ * `<label>` is inline by default, so a bare `label > text + input + hint`
+ * reflows into one paragraph: the hint of one field ends up on the same line as
+ * the caption of the next, and the whole card reads as a run-on sentence with
+ * boxes in it. Every field here is a grid instead, which is also what lines the
+ * controls up with each other. */
+.model-form > label:not(.tool-grant),
+.model-form .model-field,
+.stacked-field {
+  display: grid;
+  gap: var(--s-4);
+  margin: 0 0 var(--s-12);
+  font: var(--t-caption);
+  color: var(--fg-muted);
+}
+
+/* The caption of a stacked field names the group; the group's own contents
+   read at body size. */
+.stacked-field > .caption {
+  color: var(--fg);
+  font: var(--t-body);
+  font-weight: 600;
+}
+
+.model-form > label:not(.tool-grant) > input {
+  width: 100%;
+}
+
+.capability-list {
+  display: grid;
+  gap: var(--s-4);
+}
+
+/* Three columns, not a flex row: the descriptions differ in length, and a row
+   that sizes itself to its own content puts every checkbox at a different x. */
+.capability-list .tool-grant {
+  display: grid;
+  grid-template-columns: 14px minmax(78px, auto) 1fr;
+  align-items: start;
+  gap: var(--s-8);
+  padding: 0;
+}
+
+.capability-name {
+  color: var(--fg);
+  font-weight: 600;
+}

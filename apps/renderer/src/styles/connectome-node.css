@@ -1,0 +1,151 @@
+/* -- My IQ → node details dialog -------------------------------------- */
+
+/* A node on the map draws as a blob; the dialog is where it becomes a named
+   piece of work. It sits over the whole surface rather than inside the map
+   column so it reads the same from the map and the report. */
+.node-dialog-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--s-24);
+  background: color-mix(in srgb, var(--fibre-void) 58%, transparent);
+  backdrop-filter: blur(3px);
+}
+
+.node-dialog {
+  width: min(560px, 100%);
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--surface);
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-16);
+}
+
+.node-dialog-head {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-8);
+  padding: var(--s-12) var(--s-16);
+  border-bottom: 1px solid var(--stroke);
+}
+
+.node-dialog-head .swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-top: 5px;
+  flex: 0 0 auto;
+}
+
+.node-dialog-title {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.node-dialog-title strong {
+  font: var(--t-body-lg);
+  font-weight: 600;
+}
+
+.node-dialog-title .muted {
+  font: var(--t-caption);
+}
+
+.node-dialog-body {
+  padding: var(--s-12) var(--s-16) var(--s-16);
+  overflow: auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-12);
+}
+
+.node-facts {
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--s-8);
+}
+
+.node-facts div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.node-facts dt {
+  font: var(--t-caption);
+  color: var(--fg-muted);
+}
+
+.node-facts dd {
+  margin: 0;
+  font-weight: 600;
+}
+
+.node-chips h4,
+.node-links h4 {
+  margin: 0 0 var(--s-4);
+  font: var(--t-caption);
+  font-weight: 600;
+  color: var(--fg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.node-chips .chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-4);
+}
+
+.node-chips p {
+  margin: 0;
+  font: var(--t-caption);
+}
+
+.node-links {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+}
+
+.node-link {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0 var(--s-8);
+  width: 100%;
+  text-align: left;
+  padding: var(--s-8);
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-md, 8px);
+  background: var(--surface-alt);
+  color: inherit;
+  cursor: pointer;
+}
+
+.node-link:hover {
+  border-color: var(--primary);
+}
+
+.node-link .node-link-name {
+  font-weight: 600;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.node-link .muted {
+  grid-column: 1 / -1;
+  font: var(--t-caption);
+}

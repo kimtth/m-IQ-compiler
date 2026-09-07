@@ -1,0 +1,136 @@
+{
+  "kind": "iq.flow",
+  "version": 1,
+  "flow": {
+    "id": "flow_e2e_postmortem",
+    "name": "Incident postmortem decision pack",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "A failure mode crosses the alert threshold",
+        "config": { "trigger": "Weekly, ahead of the Monday reliability review" },
+        "notes": "Prepared before the review so the pack is on the table, not in progress."
+      },
+      {
+        "id": "n2",
+        "kind": "step",
+        "label": "Support pulls 90 days of tickets",
+        "config": {
+          "owner": "Support analyst",
+          "system": "Ticket system",
+          "duration": "1 day"
+        },
+        "notes": "By symptom, release and region."
+      },
+      {
+        "id": "n3",
+        "kind": "data",
+        "label": "Ticket extract",
+        "config": { "format": "Dataset", "system": "Ticket system" },
+        "notes": "The record of truth for how many accounts are affected and what it has cost."
+      },
+      {
+        "id": "n4",
+        "kind": "step",
+        "label": "On-call gathers community reports",
+        "config": {
+          "owner": "On-call engineer",
+          "system": "Forum posts and account notes",
+          "duration": "2 days"
+        },
+        "notes": "Community signal usually leads the ticket data by weeks. Unverified until it matches a ticket."
+      },
+      {
+        "id": "n5",
+        "kind": "step",
+        "label": "Engineering names the root cause",
+        "config": {
+          "owner": "Service owner",
+          "system": "Issue tracker",
+          "duration": "1 week"
+        },
+        "notes": ""
+      },
+      {
+        "id": "n6",
+        "kind": "decision",
+        "label": "Does it breach the SLA?",
+        "config": {
+          "question": "Has the failure breached a committed availability or data-integrity term?",
+          "criteria": "Legal and the service owner both agree the contractual test is met"
+        },
+        "notes": "Dissent is recorded by name. A breach call must not read as unanimous when it was not."
+      },
+      {
+        "id": "n7",
+        "kind": "step",
+        "label": "Reliability review signs the postmortem",
+        "config": {
+          "owner": "Reliability review",
+          "system": "Review minutes",
+          "duration": "1 meeting"
+        },
+        "notes": ""
+      },
+      {
+        "id": "n8",
+        "kind": "data",
+        "label": "Postmortem decision pack",
+        "config": { "format": "Document", "system": "Engineering records" },
+        "notes": ""
+      },
+      {
+        "id": "n9",
+        "kind": "step",
+        "label": "Support opens a remediation campaign",
+        "config": {
+          "owner": "Support lead",
+          "system": "Account portal",
+          "duration": "2 weeks"
+        },
+        "notes": ""
+      },
+      {
+        "id": "n10",
+        "kind": "end",
+        "label": "Breach declared to affected accounts",
+        "config": { "outcome": "Customers are notified and credits are issued" },
+        "notes": ""
+      },
+      {
+        "id": "n11",
+        "kind": "end",
+        "label": "Campaign running, fault monitored",
+        "config": { "outcome": "Reviewed again at the next reliability review" },
+        "notes": ""
+      }
+    ],
+    "edges": [
+      { "id": "e1", "from": "n1", "to": "n2", "label": "", "style": "solid" },
+      { "id": "e2", "from": "n2", "to": "n3", "label": "", "style": "solid" },
+      { "id": "e3", "from": "n3", "to": "n4", "label": "", "style": "solid" },
+      { "id": "e4", "from": "n4", "to": "n5", "label": "", "style": "solid" },
+      { "id": "e5", "from": "n5", "to": "n6", "label": "", "style": "solid" },
+      { "id": "e6", "from": "n6", "to": "n7", "label": "Yes", "style": "solid" },
+      { "id": "e7", "from": "n6", "to": "n9", "label": "No", "style": "solid" },
+      { "id": "e8", "from": "n7", "to": "n8", "label": "", "style": "solid" },
+      { "id": "e9", "from": "n8", "to": "n10", "label": "", "style": "solid" },
+      { "id": "e10", "from": "n9", "to": "n11", "label": "", "style": "solid" }
+    ]
+  },
+  "layout": {
+    "n1": { "x": 120, "y": 60 },
+    "n2": { "x": 120, "y": 204 },
+    "n3": { "x": 120, "y": 348 },
+    "n4": { "x": 120, "y": 492 },
+    "n5": { "x": 120, "y": 636 },
+    "n6": { "x": 120, "y": 780 },
+    "n7": { "x": 120, "y": 960 },
+    "n8": { "x": 120, "y": 1104 },
+    "n9": { "x": 380, "y": 960 },
+    "n10": { "x": 120, "y": 1248 },
+    "n11": { "x": 380, "y": 1104 }
+  },
+  "description": "# Incident postmortem decision pack\n\nHow a failure mode becomes a declared SLA breach or a quiet remediation campaign: what is gathered, who decides, and where each path ends.\n\nNothing here runs. It is a picture of the process, drawn so the people in it agree on the same one.\n"
+}

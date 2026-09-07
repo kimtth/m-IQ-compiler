@@ -1,0 +1,22 @@
+[project]
+name = "iq-research"
+version = "0.1.0"
+description = "Deep-research workflow sidecar for IQ Compiler, built on Microsoft Agent Framework."
+requires-python = ">=3.13"
+dependencies = [
+    "agent-framework>=1.13.0",
+    # The model is GitHub Copilot, driven through the Copilot CLI, so the app's
+    # existing credential is the only one involved — no API key to store and
+    # nothing to expire separately.
+    "agent-framework-github-copilot>=1.0.1",
+]
+
+[project.scripts]
+iq-research = "iq_research.__main__:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["iq_research"]

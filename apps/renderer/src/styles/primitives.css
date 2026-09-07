@@ -1,0 +1,186 @@
+/* --- primitives ---------------------------------------------------------- */
+
+button {
+  font: var(--t-body);
+  color: var(--fg);
+  background: var(--surface);
+  /* A hairline, not the strong stroke. The window can hold a dozen secondary
+     buttons at once — a pane header, a card's actions, a toolbar — and at the
+     strong weight each one drew a hard box, so the screen read as a grid of
+     outlines with content in the gaps. Hover carries the affordance. */
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-md);
+  padding: 5px 12px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-8);
+  transition:
+    background var(--dur-fast) var(--ease),
+    border-color var(--dur-fast) var(--ease),
+    box-shadow var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease);
+}
+
+button:hover:not(:disabled) {
+  background: var(--surface-hover);
+}
+
+button:active:not(:disabled) {
+  background: var(--surface-pressed);
+}
+
+button:disabled {
+  color: var(--fg-disabled);
+  border-color: var(--stroke);
+  background: var(--surface-sunken);
+  cursor: default;
+}
+
+/* The affirmative action is a solid fill. It needs no shadow to be found —
+   it is the only near-black rectangle on the surface — and a lifted button
+   beside flat cards is the detail that dates an interface fastest. */
+button.primary {
+  background: var(--gradient-primary);
+  border-color: transparent;
+  color: var(--primary-fg);
+  font-weight: 600;
+}
+
+button.primary:hover:not(:disabled) {
+  background: var(--gradient-primary-hover);
+}
+
+button.primary:active:not(:disabled) {
+  background: var(--primary-pressed);
+}
+
+/* The label has to come back too. `button.primary` sets a white foreground and
+   `button:disabled` sets the muted one, and the two rules have the same weight
+   — so the earlier one lost and a disabled primary button was white text on a
+   near-white fill. Fabric's Build button rendered as an empty grey rectangle. */
+button.primary:disabled {
+  background: var(--surface-sunken);
+  color: var(--fg-disabled);
+  border-color: var(--stroke);
+  box-shadow: none;
+}
+
+button.subtle,
+button.ghost {
+  background: none;
+  border-color: transparent;
+}
+
+button.subtle:hover:not(:disabled),
+button.ghost:hover:not(:disabled) {
+  background: var(--surface-hover);
+}
+
+button.danger {
+  border-color: var(--danger);
+  color: var(--danger);
+  background: none;
+}
+
+button.danger:hover:not(:disabled) {
+  background: var(--danger-tint);
+}
+
+button.link {
+  background: none;
+  border: none;
+  padding: 0 0 0 var(--s-8);
+  color: var(--primary);
+  font: var(--t-caption);
+  cursor: pointer;
+}
+
+button.link:hover {
+  text-decoration: underline;
+}
+
+/* Icon-only control: square hit area, icon centred, colour by token. */
+button.icon {
+  padding: 6px;
+  line-height: 0;
+  color: var(--fg-2);
+}
+
+input,
+textarea,
+select {
+  font: var(--t-body);
+  color: var(--fg);
+  background: var(--surface);
+  /* One hairline, the same on all four sides. The heavier bottom edge was a
+     Material underline left over on a box that already has a full border, and
+     two different weights on one rectangle is what makes a field look drawn
+     rather than designed. */
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-md);
+  padding: 6px 10px;
+  width: 100%;
+  transition:
+    border-color var(--dur-fast) var(--ease),
+    box-shadow var(--dur-fast) var(--ease);
+}
+
+/* A checkbox is a glyph, not a text field. The rule above is written for the
+   things you type into, and letting it reach a checkbox gives it `width: 100%`
+   — which in a flex row makes it a greedy item that eats the row and squeezes
+   the label beside it down to an ellipsis. */
+input[type="checkbox"],
+input[type="radio"],
+input[type="range"] {
+  width: auto;
+  padding: 0;
+  border: none;
+  background: none;
+  flex: 0 0 auto;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  width: 14px;
+  height: 14px;
+  margin: 0;
+  accent-color: var(--primary);
+  cursor: pointer;
+}
+
+/* Focus is a ring outside the border, not a thicker border. Growing the border
+   by a pixel meant taking a pixel of padding back to keep the box the same
+   size, so every character in the field shifted down as you clicked into it. */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ring) 28%, transparent);
+}
+
+/* The focus treatment above adds a border to a control that has none, which
+   would shift the glyph. These get a ring instead. */
+input[type="checkbox"]:focus-visible,
+input[type="radio"]:focus-visible,
+input[type="range"]:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border: none;
+  padding: 0;
+}
+
+a {
+  color: var(--primary);
+}
+
+/* 1.5, not 2. Lucide draws at 2 by default, which is right for a 24px icon and
+   heavy for the 13-16px ones this app uses everywhere — at rail size a 2px
+   stroke fills the glyph in and the row reads as a block rather than a mark.
+   This is the single change that most separates "drawn thick" from "drawn
+   fine" across the whole window. */
+svg.lucide {
+  flex: none;
+  stroke-width: 1.5;
+}

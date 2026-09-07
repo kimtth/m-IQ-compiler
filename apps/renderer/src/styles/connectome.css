@@ -1,0 +1,1098 @@
+/* -- My IQ ------------------------------------------------------------- */
+
+.connectome-body {
+  flex: 1 1 auto;
+  display: grid;
+  /* Overridden inline by the split hook, which owns the real widths. This is
+     the pre-measurement fallback only, and it names the arrangement the
+     surface opens in: list, map, and no report column until one is asked for. */
+  grid-template-columns: 320px 5px minmax(0, 1fr);
+  min-height: 0;
+  min-width: 0;
+}
+
+/* The receipt for a compile. It sits under the header rather than inside the
+   report column, because the column it would otherwise live in is closed by
+   default — which is exactly when the reader most needs telling that something
+   was published. */
+.connectome-notice {
+  margin: 0;
+  padding: var(--s-8) var(--s-12);
+  border-bottom: 1px solid var(--stroke);
+}
+
+.connectome-list,
+.connectome-report {
+  min-width: 0;
+  overflow: auto;
+  padding: var(--s-12);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-8);
+  background: var(--bg-1);
+}
+
+.connectome-list,
+.connectome-report { min-width: 0; }
+
+.connectome-list ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.connectome-list li {
+  padding: var(--s-4) var(--s-8);
+  border-radius: var(--radius-md);
+  /* Two columns: the row's own text, and a right-hand gutter for the Edit
+     control that spans both text lines so it sits beside the whole row rather
+     than beside the first line of a wrapped name. */
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: var(--s-4);
+  align-items: start;
+  font: var(--t-caption);
+}
+
+.connectome-list li > label,
+.connectome-list li > .muted {
+  grid-column: 1;
+}
+
+.connectome-list li > .muted {
+  padding-left: 24px;
+  overflow-wrap: anywhere;
+}
+
+/* The name is a control: it selects the IQ Cell on whichever picture is
+   showing. Styled as text, because it is the row's label first and a button
+   second — and because a list of forty buttons reads as a toolbar. */
+.connectome-list li .name {
+  border: none;
+  background: none;
+  padding: 0;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  overflow-wrap: anywhere;
+}
+
+.connectome-list li .name:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* Always present, never loud: twenty-six of these must not compete with the
+   names they sit beside, but a control nobody can find is not a control. */
+.connectome-list .row-edit {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: center;
+  color: var(--fg-muted);
+  opacity: 0.55;
+}
+
+.connectome-list li:hover .row-edit,
+.connectome-list .row-edit:focus-visible {
+  opacity: 1;
+  color: var(--primary);
+}
+
+/* The analysis running, over the surface it is drawing. Pinned rather than in
+   flow so appearing and disappearing never reflows the map. */
+.map-progress {
+  position: absolute;
+  left: 50%;
+  bottom: var(--s-24);
+  transform: translateX(-50%);
+  z-index: 5;
+  width: min(420px, calc(100% - var(--s-24) * 2));
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-8);
+  padding: var(--s-12) var(--s-16);
+  border-radius: var(--radius-lg);
+  border: 1px solid color-mix(in srgb, var(--primary) 40%, transparent);
+  background: color-mix(in srgb, var(--fibre-void) 88%, transparent);
+  color: var(--on-fibre-void);
+  box-shadow: var(--shadow-16);
+  pointer-events: none;
+}
+
+.map-progress-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-8);
+  font: var(--t-caption);
+}
+
+.map-progress-head strong {
+  font: var(--t-body-lg);
+  font-variant-numeric: tabular-nums;
+  min-width: 3.5ch;
+}
+
+.map-progress-head span {
+  color: var(--on-fibre-void-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.map-progress-track {
+  height: 4px;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--on-fibre-void) 18%, transparent);
+  overflow: hidden;
+}
+
+/* Width is set from the real reading, so the only thing eased is the travel
+   between two readings — never the reading itself. */
+.map-progress-fill {
+  height: 100%;
+  background: var(--primary);
+  transition: width var(--dur-fast) var(--ease);
+}
+
+.map-progress-steps {
+  display: flex;
+  gap: var(--s-12);
+  font: var(--t-caption);
+  color: var(--on-fibre-void-muted);
+}
+
+.map-progress-steps .done {
+  color: var(--on-fibre-void);
+}
+
+.map-progress-steps .now {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .map-progress-fill {
+    transition: none;
+  }
+}
+
+/* Which surface compiled an IQ Cell. Three can, and the difference is not
+   decorative: an editor cell is a procedure, a knowledge cell answers from a
+   corpus, a memory cell applies a rule. Hue carries it; the label says it, so
+   the chip never depends on colour alone. */
+/* The knowledge graph takes the height it is given.
+   It used to draw into a fixed 460px strip, so a maximised window showed the
+   same short picture with the rest of the pane empty under it — which on a
+   graph, where the whole value is seeing the shape at once, is throwing away
+   most of the space. The card grows, and the frame inside it takes whatever is
+   left after the header and the controls. */
+.pane-body:has(.graph-card) {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* Graph on the left, the files it was built from on the right. The list is a
+   fixed column because it is an inventory, not a view that benefits from more
+   room; the graph takes everything else. */
+.knowledge-split {
+  display: flex;
+  gap: var(--s-12);
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+}
+
+.knowledge-main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+}
+
+/* Before a graph has been asked for. Centred and stated rather than an empty
+   frame: the surface has not failed, it is waiting for a decision, and the
+   sentence says exactly what pressing the button will read and write. */
+.knowledge-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-8);
+  flex: 1;
+  min-height: 0;
+  padding: var(--s-24);
+  text-align: center;
+}
+
+.knowledge-empty .muted {
+  max-width: 52ch;
+  line-height: 1.6;
+}
+
+/* The manifest of what Compile is about to read.
+   Left-aligned inside a centred card, because it is a list of paths and a
+   centred list of paths cannot be scanned. It is bounded and scrolls: a vault
+   with two hundred sources must not push the button that acts on them off the
+   bottom of the pane, which is the one control this state exists to offer. */
+.knowledge-manifest {
+  width: 100%;
+  max-width: 62ch;
+  text-align: left;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-sunken);
+  padding: var(--s-12);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-8);
+  min-height: 0;
+}
+
+.knowledge-manifest.empty {
+  text-align: center;
+}
+
+.knowledge-manifest-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-8);
+}
+
+/* The vault path is the thing most likely to be wrong, so it is shown whole on
+   hover rather than truncated into something that looks plausible. */
+.knowledge-manifest-head .mono {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  direction: rtl;
+  text-align: left;
+  max-width: 28ch;
+  font-size: 11px;
+}
+
+.knowledge-manifest-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-8);
+  overflow-y: auto;
+  max-height: 34vh;
+  min-height: 0;
+}
+
+.knowledge-manifest-folder {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding-bottom: var(--s-2);
+  border-bottom: 1px solid var(--border);
+  margin-bottom: var(--s-4);
+}
+
+.knowledge-manifest-group .knowledge-file {
+  padding-left: var(--s-8);
+}
+
+/* Two lists, stacked: what is waiting to be ingested, and what the graph is
+   made of. They share a column because they are the same question asked at two
+   stages, and seeing the gap between them is the point.
+
+   Sources takes what it needs up to a share of the column, Notes takes the
+   rest. An even split looked tidy and was wrong: a vault has a handful of
+   sources and a hundred notes, so half the column sat empty above a list that
+   had been squeezed to nothing. */
+.knowledge-side {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-12);
+  width: 260px;
+  flex-shrink: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.knowledge-side > .knowledge-files {
+  width: auto;
+}
+
+.knowledge-side > .knowledge-files.sources {
+  flex: 0 1 auto;
+  max-height: 40%;
+}
+
+.knowledge-side > .knowledge-files.notes {
+  flex: 1 1 0;
+}
+
+/* One note, read in a dialog. Wider than the default card because the links
+   are two columns and the body is Markdown; taller because a note is the one
+   thing on this surface someone actually reads. */
+.modal-card.knowledge-note {
+  width: min(880px, 92vw);
+}
+
+/* The note body. Wraps rather than scrolling sideways — this is prose, not the
+   JSON snippet `.modal-body pre` was written for — and is bounded so the two
+   link columns above it stay in view. */
+.modal-card.knowledge-note .knowledge-note-body {
+  margin-top: var(--s-12);
+  max-height: 40vh;
+  overflow: auto;
+  white-space: pre-wrap;
+  font-size: 12px;
+}
+
+/* The show-more toggle sits under a list of links, so it lines up with them
+   instead of carrying `button.link`'s default left indent. */
+.modal-card.knowledge-note button.link {
+  padding-left: 0;
+  margin-top: var(--s-4);
+}
+
+/* How My IQ is built. Wider and taller than the default card because the
+   content is a numbered recipe someone is expected to read and then edit, and
+   a six-step list in a 560px box scrolls after the second step. */
+.modal-card.instructions {
+  width: min(760px, 92vw);
+}
+
+.instructions-text {
+  width: 100%;
+  min-height: 44vh;
+  max-height: 60vh;
+  resize: vertical;
+  /* Prose, wrapped. The recipe is indented in places, so the tab size matters
+     as much as the wrap does. */
+  white-space: pre-wrap;
+  line-height: 1.6;
+  tab-size: 2;
+}
+
+.knowledge-files {
+  display: flex;
+  flex-direction: column;
+  width: 260px;
+  flex-shrink: 0;
+  /* Both are needed: without the floor a flex item refuses to shrink below its
+     content, and without the clip the content draws outside the card when it
+     does — which is what put two panels' text on top of each other. */
+  min-height: 0;
+  overflow: hidden;
+  gap: var(--s-8);
+  padding: var(--s-12);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+}
+
+.knowledge-files-head,
+.knowledge-files-note,
+.knowledge-files-filter {
+  flex: 0 0 auto;
+}
+
+.knowledge-files-note {
+  font-size: 11px;
+}
+
+.knowledge-files-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-8);
+}
+
+.knowledge-files-filter {
+  width: 100%;
+}
+
+.knowledge-files-list {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+.knowledge-files-list details {
+  margin-bottom: var(--s-4);
+}
+
+.knowledge-files-list summary {
+  cursor: pointer;
+  font-size: 12px;
+  padding: 2px 0;
+}
+
+.knowledge-file {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  padding-left: var(--s-12);
+}
+
+.knowledge-file-open {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 2px 4px;
+  border-radius: var(--radius-sm, 4px);
+  font-size: 12px;
+  color: inherit;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.knowledge-file-open:hover {
+  background: var(--sidebar-accent);
+}
+
+.knowledge-file.selected .knowledge-file-open {
+  background: var(--sidebar-accent);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.graph-card {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+/* Sigma injects its own absolutely-positioned canvases, so the frame has to be
+   the containing block or they escape it and cover the panel. */
+.graph-frame {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  min-height: 320px;
+  overflow: hidden;
+  background: var(--surface-sunken);
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-md);
+}
+
+/* A chip states one short fact, so it is as wide as that fact. The card it sits
+   in is a flex column, which stretches its items — so the chip spanned the whole
+   row and its label floated in the middle of an otherwise empty pill. */
+.chip.origin {
+  align-self: flex-start;
+  justify-content: flex-start;
+  border-color: color-mix(in srgb, currentColor 35%, transparent);
+  background: color-mix(in srgb, currentColor 10%, transparent);
+}
+
+.chip.origin.editor {
+  color: var(--primary);
+}
+
+.chip.origin.knowledge {
+  color: var(--graph-skill, var(--success));
+}
+
+.chip.origin.memory {
+  color: var(--warning);
+}
+
+.chip.origin.industry {
+  color: var(--graph-tag, var(--fg-2));
+}
+
+.chip.origin.connectome {
+  color: var(--graph-link, var(--fg-2));
+}
+
+.connectome-list li.selected {
+  background: var(--surface-selected);
+}
+
+/* Asking the map questions. Shares the report column rather than adding a
+   fourth, so the pane-sizing rules stay as simple as they are.
+
+   The transcript itself is Chat's: `.msg`, `.who`, `.bubble`, styled once in
+   `composer.css` and `message-body.css`. This file used to draw its own — a
+   right-aligned question with no speaker on it, an answer boxed in a left rule
+   — and the result was that the same exchange looked like a different product
+   depending on which pane it was held in. What is left here is only what is
+   genuinely this surface's: the standing claim above the log, and the ranked
+   rows inside an answer. */
+.connectome-chat {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1;
+  gap: var(--s-12);
+}
+
+/* The standing claim, above the log rather than inside it: it is true of every
+   answer, so it must not scroll away with the first one. */
+.connectome-chat .chat-lens {
+  margin: 0;
+  padding-bottom: var(--s-8);
+  border-bottom: 1px solid var(--stroke);
+  font: var(--t-caption);
+  color: var(--fg-muted);
+}
+
+.connectome-chat .chat-log {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  /* Keeps the text off the scrollbar rather than under it. */
+  padding-right: var(--s-4);
+}
+
+.connectome-chat .chat-headline {
+  margin: 0;
+  font: var(--t-body);
+  line-height: 1.5;
+  color: var(--fg);
+}
+
+/* An answer here is four things stacked — a headline, a ranked list, the limit
+   on the claim and the follow-ups — where Chat's is one block of prose. The
+   bubble is the same bubble; only what goes in it needs spacing.
+
+   Stretched rather than left to shrink-to-fit. A follow-up chip is one line
+   that never wraps, so the bubble's min-content is the width of the longest
+   question — 448px in a 301px column — and a bubble sized to its min-content
+   drags a horizontal scrollbar across the whole transcript. Stretching gives
+   the chips a definite width to clip their `max-width: 100%` against. */
+.connectome-chat .msg.from-agent .bubble {
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+  gap: var(--s-8);
+  min-width: 0;
+}
+
+.connectome-chat .chat-next,
+.connectome-chat .chat-suggestions {
+  min-width: 0;
+}
+
+/* A ranked answer is a column of figures, and a column of figures typed into a
+   paragraph cannot be scanned. Each row is the entity, the reason and the
+   number, with the number in mono so the column lines up. */
+.connectome-chat .chat-rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+
+.connectome-chat .chat-row {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-8);
+  min-width: 0;
+  padding: var(--s-4) var(--s-8);
+  border-radius: var(--radius-sm);
+  isolation: isolate;
+}
+
+/* The bar is the magnitude, drawn behind the text rather than beside it: a
+   separate gutter would cost the width the names need, and this pane is the
+   narrow one. Faint enough that it reads as a background and never competes
+   with the figure it is describing. */
+.connectome-chat .chat-row-bar {
+  position: absolute;
+  z-index: -1;
+  inset: 0 auto 0 0;
+  border-radius: var(--radius-sm);
+  background: var(--primary-tint);
+}
+
+.connectome-chat .chat-row[data-tone="warn"] .chat-row-bar {
+  background: var(--warning-tint);
+}
+
+.connectome-chat .chat-row[data-tone="danger"] .chat-row-bar {
+  background: var(--danger-tint);
+}
+
+.connectome-chat .chat-row-label {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  text-align: left;
+  /* Resets for the button case. A clickable row and a plain one must sit at the
+     same baseline, or a list with both in it steps up and down. */
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+}
+
+.connectome-chat button.chat-row-label {
+  cursor: pointer;
+}
+
+.connectome-chat button.chat-row-label:hover .chat-row-name {
+  text-decoration: underline;
+}
+
+.connectome-chat .chat-row-name {
+  font: var(--t-dense);
+  color: var(--fg);
+  overflow-wrap: anywhere;
+}
+
+.connectome-chat .chat-row-note {
+  font: var(--t-caption);
+  color: var(--fg-muted);
+  overflow-wrap: anywhere;
+}
+
+.connectome-chat .chat-row-value {
+  flex: 0 0 auto;
+  font: var(--t-caption);
+  font-family: var(--font-mono);
+  color: var(--fg-2);
+  white-space: nowrap;
+}
+
+/* The fold. Set as text rather than a chip so it does not read as one of the
+   rows, and left-aligned under them so the count sits where the eye already
+   is when it runs out of list. */
+.connectome-chat .chat-more {
+  align-self: flex-start;
+  margin: 0;
+  padding: var(--s-2) var(--s-8);
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: none;
+  cursor: pointer;
+  font: var(--t-caption);
+  color: var(--fg-muted);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.connectome-chat .chat-more:hover {
+  background: var(--surface-hover);
+  color: var(--fg);
+}
+
+/* The qualification, and always the last thing said. Findings are claims about
+   how someone's work hangs together; the limit on the claim travels with it. */
+.connectome-chat .chat-note {
+  margin: 0;
+  font: var(--t-caption);
+  line-height: 1.5;
+  color: var(--fg-muted);
+}
+
+/* Follow-ups. An answer that is a dead end makes the reader work out what else
+   this can do; these draw the vocabulary as the exchange goes. */
+.connectome-chat .chat-next,
+.connectome-chat .chat-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-8);
+}
+
+.connectome-chat .chat-next {
+  padding-top: var(--s-4);
+}
+
+.connectome-chat .chat-next .chip,
+.connectome-chat .chat-suggestions .chip {
+  cursor: pointer;
+  max-width: 100%;
+  padding: 2px var(--s-8);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.connectome-chat .chat-next .chip:hover,
+.connectome-chat .chat-suggestions .chip:hover {
+  background: var(--surface-hover);
+  color: var(--fg);
+}
+
+/* The expander is not one of the questions, so it must not look like one. A
+   dashed edge reads as "there is more behind this" without adding a second
+   button style to the surface. */
+.connectome-chat .chip-more {
+  border-style: dashed;
+  color: var(--fg-muted);
+}
+
+.connectome-chat .chat-suggestions {
+  padding-top: var(--s-4);
+}
+
+.connectome-list label {
+  display: flex;
+  align-items: start;
+  gap: var(--s-8);
+  min-width: 0;
+  color: var(--fg);
+  cursor: pointer;
+}
+
+/* The name is the one thing this row exists to show, so it wraps rather than
+   truncating. Two lines is the ceiling: past that a row stops being scannable
+   and the pane is the wrong width, which is what the divider is for. */
+.connectome-list label .name {
+  min-width: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+
+.connectome-list label input[type="checkbox"] {
+  margin-top: 2px;
+}
+
+.connectome-map {
+  position: relative;
+  display: flex;  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+
+.map-tabs {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  padding: var(--s-4) var(--s-8);
+  border-bottom: 1px solid var(--stroke);
+  font: var(--t-caption);
+}
+
+.map-tabs .spacer {
+  flex: 1 1 auto;
+}
+
+.map-tabs > .muted {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.map-tabs button {
+  border: none;
+  background: none;
+  padding: var(--s-4) var(--s-8);
+  border-radius: var(--radius-md);
+  color: var(--fg-muted);
+  font: var(--t-caption);
+  cursor: pointer;
+}
+
+.map-tabs button.active {
+  background: var(--surface-selected);
+  color: var(--fg);
+}
+
+/* The transport band sits between the view switch and the picture: it is a
+   caption for what the clock is doing, so it belongs above the surface it
+   narrates.
+
+   It wraps. Measured at 435px — the width the map column actually gets in a
+   1280px window with both side panes open — a single row squeezed the reading
+   to "4 …" and "8 of 40 IQ C…", which is the one part of the bar that has to
+   be readable: the counts are the claim the picture is making at that moment. */
+.tour-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--s-8);
+  padding: var(--s-4) var(--s-8);
+  border-bottom: 1px solid var(--stroke);
+  background: var(--bg-2);
+  font: var(--t-caption);
+  min-height: 38px;
+}
+
+.tour-bar.playing {
+  background: color-mix(in srgb, var(--brand) 7%, var(--bg-2));
+}
+
+.tour-copy {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-8);
+  flex: 1 1 200px;
+  min-width: 0;
+}
+
+/* Both halves ellipsise. The title used to be `nowrap` with nothing to clip it,
+   so a long IQ Cell name was cut mid-word by the flex box with no sign that
+   anything had been dropped. */
+.tour-copy strong {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  flex: 0 1 auto;
+  font: var(--t-caption-strong, var(--t-caption));
+  color: var(--fg);
+}
+
+.tour-copy .muted {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.tour-count {
+  color: var(--fg-muted);
+  flex: 0 0 auto;
+}
+
+.tour-dots {
+  display: flex;
+  gap: 4px;
+  flex: 0 0 auto;
+}
+
+.tour-dots button {
+  width: 7px;
+  height: 7px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--stroke-strong);
+  cursor: pointer;
+  transition: background 140ms ease, transform 140ms ease;
+}
+
+.tour-dots button.on {
+  background: var(--brand);
+  transform: scale(1.25);
+}
+
+/* The time-lapse scrubber.
+
+   Given the elastic share of the bar rather than a fixed width: it is the
+   control the reader actually drives, and the caption beside it is what
+   compresses when the pane is narrow. */
+.timelapse-scrub {
+  flex: 1 1 180px;
+  min-width: 90px;
+  max-width: 320px;
+  accent-color: var(--brand);
+  margin: 0;
+}
+
+/* `hidden` on a flex child is overridden by `display: flex`, and the map
+   surface must stay in the tree rather than being unmounted, so the attribute
+   is honoured explicitly. */
+.map-surface[hidden] {
+  display: none;
+}
+
+.map-surface {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+  background: var(--fibre-void);
+  isolation: isolate;
+}
+
+/* A restrained game-like HUD layer: it makes the map feel active without
+   becoming data. The actual graph stays in the WebGL canvas; these low-opacity
+   scan lines and colour blooms only add atmosphere around the neural field. */
+.map-surface:not(.table)::before,
+.map-surface:not(.table)::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.map-surface:not(.table)::before {
+  background:
+    radial-gradient(circle at 18% 76%, color-mix(in srgb, var(--intelligence-cyan) 16%, transparent), transparent 26%),
+    radial-gradient(circle at 54% 64%, color-mix(in srgb, var(--intelligence-violet) 14%, transparent), transparent 30%),
+    radial-gradient(circle at 82% 34%, color-mix(in srgb, var(--creation-orange) 11%, transparent), transparent 22%);
+  mix-blend-mode: screen;
+}
+
+.map-surface:not(.table)::after {
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--intelligence-cyan) 8%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--intelligence-violet) 7%, transparent) 1px, transparent 1px);
+  background-size: 36px 36px;
+  mask-image: linear-gradient(to bottom, transparent, #000 14%, #000 86%, transparent);
+  opacity: 0.42;
+  animation: neural-grid-drift 14s linear infinite;
+}
+
+@keyframes neural-grid-drift {
+  to { background-position: 36px 36px; }
+}
+
+.map-surface.table {
+  overflow: auto;
+  padding: var(--s-12);
+  background: var(--bg-base);
+}
+
+.map-surface canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+  position: relative;
+  z-index: 1;
+}
+
+.map-surface canvas:active {
+  cursor: grabbing;
+}
+
+.map-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-8);
+  text-align: center;
+  padding: var(--s-24);
+  pointer-events: none;
+  color: var(--on-fibre-void);
+}
+
+/* The overlays sit on the void, not on an app surface, so they take their own
+   on-dark colours in both themes rather than the theme's foreground. */
+.map-placeholder .muted {
+  color: var(--on-fibre-void-muted);
+}
+
+/* Names for the nodes.
+   The layer is inert: every pointer event goes through to the canvas, so a
+   label can never eat the click that picks the node it names. `overflow:
+   hidden` clips a name whose node sits at the edge of the pane instead of
+   letting it widen the surface. */
+.map-labels {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Positioned by the scene, in pixels, through `transform`. Laying these out
+   with `left`/`top` instead would put a layout on the main thread every frame.
+   The shadow is what keeps a name legible where it crosses a bright fibre. */
+.map-label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  white-space: nowrap;
+  font: var(--t-caption);
+  color: var(--on-fibre-void-muted);
+  text-shadow:
+    0 1px 2px var(--fibre-void),
+    0 0 6px var(--fibre-void);
+  will-change: transform;
+}
+
+/* The one the reader asked about. Its neighbours keep the resting weight, so
+   the selected cell is still the first thing found. */
+.map-label.on {
+  color: var(--on-fibre-void);
+  font-weight: 600;
+}
+
+.map-stale,
+.map-legend {
+  position: absolute;
+  z-index: 4;
+  border-radius: var(--radius-lg);
+  border: 1px solid color-mix(in srgb, var(--on-fibre-void) 18%, transparent);
+  background: color-mix(in srgb, var(--fibre-void) 72%, transparent);
+  backdrop-filter: blur(6px);
+  font: var(--t-caption);
+}
+
+.map-stale {
+  top: var(--s-12);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: var(--s-4) var(--s-12);
+  color: var(--soma-degraded);
+  border-color: color-mix(in srgb, var(--soma-degraded) 55%, transparent);
+}
+
+.map-legend {
+  left: var(--s-12);
+  bottom: var(--s-12);
+  margin: 0;
+  padding: var(--s-4) var(--s-12);
+  color: var(--on-fibre-void-muted);
+  max-width: min(420px, calc(100% - var(--s-24)));
+}
+
+/* Closed it is one line; open it is the key. Either way it sits over the
+   picture rather than beside it, because the picture is what the pane is for. */
+.map-legend > summary {
+  cursor: pointer;
+  color: var(--on-fibre-void);
+  list-style-position: inside;
+  padding: var(--s-4) 0;
+}
+
+.map-legend[open] > summary {
+  margin-bottom: var(--s-4);
+}
+
+.map-legend > dl {
+  display: grid;
+  gap: 2px;
+  margin: 0 0 var(--s-4);
+}
+
+.map-legend div {
+  display: flex;
+  gap: var(--s-8);
+}
+
+.map-legend dt {
+  min-width: 92px;
+  color: var(--on-fibre-void);
+}
+
+.map-legend dd {
+  margin: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .map-surface:not(.table)::after {
+    animation: none;
+  }
+}
+
+.evidence {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  font: var(--t-caption);
+}

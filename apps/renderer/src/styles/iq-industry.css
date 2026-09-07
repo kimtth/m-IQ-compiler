@@ -1,0 +1,174 @@
+/* ---------------------------------------------------------------------------
+   IQ Cell → IQ Industry.
+
+   A reading surface, so it is typeset rather than laid out: one measured
+   column of prose with a fixed list on the left and an outline beside it. The
+   measure is capped at 78ch because a primer is 20 000 words of body text and
+   a line that runs the width of a 1280px canvas is unreadable however good the
+   content is.
+--------------------------------------------------------------------------- */
+.industry {
+  display: flex;
+  gap: var(--s-12);
+  min-height: 0;
+  min-width: 0;
+}
+
+.industry-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-8);
+  width: 260px;
+  flex-shrink: 0;
+  min-height: 0;
+  overflow: auto;
+  padding: var(--s-12);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+}
+
+.industry-list h4 {
+  font: var(--t-meta);
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  margin: var(--s-8) 0 var(--s-4);
+}
+
+.industry-search {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  flex: 0 0 auto;
+}
+
+.industry-search input {
+  width: 100%;
+}
+
+.industry-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  border-left: 2px solid transparent;
+  padding: var(--s-4) var(--s-8);
+  border-radius: var(--radius-sm, 4px);
+  color: inherit;
+}
+
+.industry-item:hover {
+  background: var(--sidebar-accent);
+}
+
+.industry-item.active {
+  background: var(--surface-active);
+  border-left-color: var(--accent);
+}
+
+.industry-item .label {
+  font-weight: 600;
+  text-align: left;
+}
+
+/* Three lines of the primer's own abstract. Enough to choose between five
+   documents; not so much that the list becomes the reading. */
+.industry-item .detail {
+  font: var(--t-caption);
+  color: var(--fg-muted);
+  text-align: left;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+}
+
+.industry-note {
+  margin-top: auto;
+  font-size: 11px;
+}
+
+.industry-doc {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  gap: var(--s-8);
+}
+
+.industry-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--s-12);
+  flex: 0 0 auto;
+}
+
+.industry-head h3 {
+  display: flex;
+  align-items: center;
+  gap: var(--s-8);
+  margin: 0;
+}
+
+.industry-split {
+  display: flex;
+  gap: var(--s-16);
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+}
+
+/* The outline scrolls with its own document, not with the page: a table of
+   contents that scrolls away is a list you cannot use to get back. */
+.industry-outline {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  width: 200px;
+  flex-shrink: 0;
+  min-height: 0;
+  overflow: auto;
+  padding-right: var(--s-8);
+  border-right: 1px solid var(--border);
+}
+
+.industry-outline button {
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 2px var(--s-4);
+  border-radius: var(--radius-sm, 4px);
+  font: var(--t-caption);
+  color: var(--fg-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.industry-outline button:hover {
+  background: var(--sidebar-accent);
+  color: var(--fg);
+}
+
+.industry-outline .outline-1 {
+  font-weight: 600;
+  color: var(--fg);
+}
+
+.industry-outline .outline-3 {
+  padding-left: var(--s-12);
+}
+
+.industry-page {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+  scroll-behavior: smooth;
+}

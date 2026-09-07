@@ -1,0 +1,16 @@
+package,version,description,service,vendor_code,maintenance,licence,annual_cost_usd,critical_path
+nw-auth-sdk,4.2.1,Session and token handling,checkout-api,VEN-0412,sole maintainer,MIT,0,yes
+nw-auth-cli,2.0.8,Token minting for local development,checkout-api,VEN-0412,sole maintainer,MIT,0,no
+stream-bridge,7.4.0,Event fan-out to the ledger,ledger-worker,VEN-0877,active team,Apache-2.0,48000,yes
+stream-bridge-admin,7.4.0,Topic and retention administration,ledger-worker,VEN-0877,active team,Apache-2.0,0,no
+vaultline,3.11.2,Secret storage client,checkout-api,VEN-1103,active team,BSL-1.1,72000,yes
+vaultline-agent,3.11.2,Sidecar that renews leases,checkout-api,VEN-1103,active team,BSL-1.1,0,no
+formkit,1.9.4,Form validation in the console,web-console,VEN-0641,active team,MIT,0,no
+formkit-masks,1.2.0,Input masking,web-console,VEN-0641,active team,MIT,0,no
+chart-kit,5.6.0,Dashboard charts,web-console,VEN-0233,active team,MIT,0,no
+chart-kit-themes,5.6.0,Chart palettes,web-console,VEN-0233,active team,MIT,0,no
+pg-pool-guard,2.3.7,Connection pooling,ledger-worker,VEN-0519,active team,MIT,0,no
+pg-migrate-lock,1.8.0,Migration advisory locks,ledger-worker,VEN-0519,active team,MIT,0,no
+render-grid,6.1.0,Table and grid rendering,web-console,VEN-0704,unmaintained,MIT,0,yes
+render-grid-virtual,6.1.0,Row virtualisation,web-console,VEN-0704,unmaintained,MIT,0,no
+tracer-otel,0.29.3,Trace export,platform-shared,VEN-0958,active team,Apache-2.0,0,no
